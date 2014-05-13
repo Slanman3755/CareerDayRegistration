@@ -1,0 +1,64 @@
+<head>
+  <title>Career Day Registration</title>
+</head>
+
+<body>
+  {{> form}}
+  {{> list}}
+</body>
+
+<template name="form">
+  <h1>Welcome to Career Day registration</h1>
+  <table>
+	<tr>
+		<td><h4>First Name</h4></td>
+		<td><input type="text" value="" name="fname" id="fname"></td>
+	</tr>
+	<tr>
+		<td><h4>Last Name</h4></td>
+		<td><input type="text" value="" name="lname" id="lname"></td>
+	</tr>
+	<tr>
+		<td><h4>Choose 3 classes</h4></td>
+	</tr>
+	{{#each classes}}
+		{{> classlist}}
+	{{/each}}
+	<tr>
+		<td><input type="submit" name="register" value="Register" class="register"/></td>
+		<td><h4 id="alert">{{RegisterMsg}}</h4></td>
+	</tr>
+  </table>
+</template>
+
+<template name="list">
+	<table>
+		<thead>
+		<tr>
+			<td>First Name</td>
+			<td>Last Name</td>
+			<td>Class 1</td>
+			<td>Class 2</td>
+			<td>Class 3</td>
+		</tr>
+		</thead>
+		<tbody>
+		{{#each students}}
+		<tr>
+			<td>{{fname}}</td>
+			<td>{{lname}}</td>
+			{{#each classnames}}
+				<td>{{.}}</td>
+			{{/each}}
+		</tr>
+		{{/each}}
+	</tbody>
+	</table>
+</template>
+
+<template name="classlist">
+	<tr>
+		<td><input type="checkbox" data-meteor-id="{{_id}}" class="classcheck" id="{{classname}}">{{classname}}</td>
+		<td>{{count}}/30</td>
+	</tr>
+</template>

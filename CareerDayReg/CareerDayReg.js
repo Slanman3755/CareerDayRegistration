@@ -22,6 +22,23 @@ if (Meteor.isClient) {
     return Session.get("registermsg");
   }
 
+  Handlebars.registerHelper('classesheader', function(){
+      var students = Students.find().fetch();
+      if(students.length>0)
+        return _.range(1, students[0].classnames.length+1);
+      else return [];
+  });
+
+  function liveCount(classname) {
+    var count = Students.find({classnames: classname}).fetch().length;
+    if(count!=null)
+      return count;
+    else
+      return 0;
+  }
+
+  Handlebars.registerHelper('livecount', liveCount);
+
 	Template.form.events({
     	'click input.register': function () {
       		var fname = $('#fname').val();
@@ -36,7 +53,7 @@ if (Meteor.isClient) {
             var i = 0;
             var overflowed = false;
             checked.each(function(){
-              if(Classes.findOne({_id: $(this).data("meteor-id")}).count<30)
+              if(liveCount(Classes.findOne({_id: $(this).data("meteor-id")}).classname)<30)
                 ids[i] = $(this).data("meteor-id");
               else {
                 overflowed = true;
@@ -47,7 +64,6 @@ if (Meteor.isClient) {
 
             if(!overflowed) {
               for(var i=0; i<ids.length; i++) {
-                Classes.update({_id: ids[i]}, {$inc: {count: 1}});
                 classnames[i] = Classes.findOne({_id: ids[i]}).classname;
               }
 
@@ -71,7 +87,7 @@ if (Meteor.isServer) {
   	Meteor.startup(function () {
       if (Classes.find().count() === 0) {
       for (var i = 0; i < classnames.length; i++)
-        Classes.insert({classname: classnames[i], count: 0});
+        Classes.insert({classname: classnames[i]});
       }
   	});
 }

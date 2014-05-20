@@ -37,9 +37,9 @@
 		<tr>
 			<td>First Name</td>
 			<td>Last Name</td>
-			<td>Class 1</td>
-			<td>Class 2</td>
-			<td>Class 3</td>
+			{{#each classesheader}}
+				<td>Class {{.}}</td>
+			{{/each}}
 		</tr>
 		</thead>
 		<tbody>
@@ -59,6 +59,6 @@
 <template name="classlist">
 	<tr>
 		<td><input type="checkbox" data-meteor-id="{{_id}}" class="classcheck" id="{{classname}}">{{classname}}</td>
-		<td>{{count}}/30</td>
+		<td>{{livecount classname}}/30</td>
 	</tr>
 </template>

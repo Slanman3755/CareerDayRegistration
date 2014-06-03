@@ -6,3 +6,7 @@
 standard-app-packages
 autopublish
 insecure
+iron-router
+accounts-base
+accounts-password
+accounts-ui

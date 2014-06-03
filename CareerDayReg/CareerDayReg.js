@@ -15,6 +15,8 @@ var schoolnames = ["Richmond High School",
                     "Centerville High School",
                     "Northeastern High School"];
 
+Accounts.config({forbidClientAccountCreation: true});
+
 if (Meteor.isClient) {
 
 	Template.list.students = function(){
@@ -86,6 +88,8 @@ if (Meteor.isClient) {
               setTimeout(function(){
                 $('input.register').prop("disabled", false);
               }, 5000);
+
+              Router.go('home');
             } else
               Session.set("registermsg", "One or more of your requested classes is already full");
           } else

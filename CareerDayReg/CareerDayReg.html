@@ -2,10 +2,23 @@
   <title>Career Day Registration</title>
 </head>
 
-<body>
+<template name="home">
+    <a href="{{pathFor 'admin'}}">Admin</a>
+    <a href="{{pathFor 'register'}}">Register</a>
+</template>
+
+<template name="admin">
+    {{>loginButtons}}
+    {{#if currentUser}}
+        {{> list}}
+    {{/if}}
+    <a href="{{pathFor 'home'}}">Home</a>
+</template>
+
+<template name="register">
   {{> form}}
-  {{> list}}
-</body>
+  <a href="{{pathFor 'home'}}">Home</a>
+</template>
 
 <template name="form">
   <h1>Welcome to Career Day Registration</h1>

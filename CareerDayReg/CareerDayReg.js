@@ -1,5 +1,6 @@
 Students = new Meteor.Collection("students");
 Classes = new Meteor.Collection("classes");
+Schools = new Meteor.Collection("schools");
 
 var classnames = ["Math",
                     "Science",
@@ -7,6 +8,12 @@ var classnames = ["Math",
                     "French",
                     "History",
                     "Art"];
+
+var schoolnames = ["Richmond High School",
+                    "Seton Catholic High School",
+                    "Lincoln High School",
+                    "Centerville High School",
+                    "Northeastern High School"];
 
 if (Meteor.isClient) {
 
@@ -16,6 +23,10 @@ if (Meteor.isClient) {
 
   Template.form.classes = function(){
     return Classes.find();
+  }
+
+  Template.form.schools = function(){
+    return Schools.find();
   }
 
   Template.form.RegisterMsg = function(){
@@ -41,12 +52,13 @@ if (Meteor.isClient) {
 
 	Template.form.events({
     	'click input.register': function () {
-      		var fname = $('#fname').val();
-      		var lname = $('#lname').val();
-      		
+      		var fname = $('input.fname').val();
+      		var lname = $('input.lname').val();
+          var schoolname = $('select.schoolselect :selected').val();
           var checked = $('input.classcheck:checked');
         
-
+          if(fname!="" && lname!="") {
+          if(schoolname!="none") {
           if(checked.length==3) {
             var ids = [0,0,0];
             var classnames = ["","",""];
@@ -67,17 +79,21 @@ if (Meteor.isClient) {
                 classnames[i] = Classes.findOne({_id: ids[i]}).classname;
               }
 
-              Students.insert({fname:fname, lname:lname, classnames:classnames});
+              Students.insert({fname:fname, lname:lname, schoolname:schoolname, classnames:classnames});
 
       		    Session.set("registermsg", "Successfully Registered");
               $('input.register').prop("disabled", true);
               setTimeout(function(){
                 $('input.register').prop("disabled", false);
-              }, 3000);
+              }, 5000);
             } else
               Session.set("registermsg", "One or more of your requested classes is already full");
           } else
-            Session.set("registermsg", "Please select 3 classes");
+            Session.set("registermsg", "Please select exactly 3 classes");
+          } else
+            Session.set("registermsg", "Please select a school");
+          } else
+            Session.set("registermsg", "Please input a first and last name");
     	}
   })
 }
@@ -85,9 +101,12 @@ if (Meteor.isClient) {
 if (Meteor.isServer) {
 
   	Meteor.startup(function () {
-      if (Classes.find().count() === 0) {
+      if (Classes.find().count() === 0)
       for (var i = 0; i < classnames.length; i++)
         Classes.insert({classname: classnames[i]});
-      }
+
+      if (Schools.find().count() === 0)
+      for (var i = 0; i < schoolnames.length; i++)
+        Schools.insert({schoolname: schoolnames[i]});      
   	});
 }

@@ -8,15 +8,24 @@
 </body>
 
 <template name="form">
-  <h1>Welcome to Career Day registration</h1>
+  <h1>Welcome to Career Day Registration</h1>
   <table>
 	<tr>
 		<td><h4>First Name</h4></td>
-		<td><input type="text" value="" name="fname" id="fname"></td>
+		<td><input type="text" value="" name="fname" id="fname" class="fname"></td>
 	</tr>
 	<tr>
 		<td><h4>Last Name</h4></td>
-		<td><input type="text" value="" name="lname" id="lname"></td>
+		<td><input type="text" value="" name="lname" id="lname" class="lname"></td>
+	</tr>
+	<tr>
+		<td><h4>School</h4></td>
+		<td><select name="schoolselect" id="schoolselect" class="schoolselect">
+			<option value="none">Select a school</option>
+			{{#each schools}}
+				{{> schooloption}}
+			{{/each}}
+		</select></td>
 	</tr>
 	<tr>
 		<td><h4>Choose 3 classes</h4></td>
@@ -37,6 +46,7 @@
 		<tr>
 			<td>First Name</td>
 			<td>Last Name</td>
+			<td>School</td>
 			{{#each classesheader}}
 				<td>Class {{.}}</td>
 			{{/each}}
@@ -47,6 +57,7 @@
 		<tr>
 			<td>{{fname}}</td>
 			<td>{{lname}}</td>
+			<td>{{schoolname}}</td>
 			{{#each classnames}}
 				<td>{{.}}</td>
 			{{/each}}
@@ -56,9 +67,16 @@
 	</table>
 </template>
 
+
 <template name="classlist">
 	<tr>
 		<td><input type="checkbox" data-meteor-id="{{_id}}" class="classcheck" id="{{classname}}">{{classname}}</td>
 		<td>{{livecount classname}}/30</td>
 	</tr>
 </template>
+
+<template name="schooloption">
+	<option value="{{schoolname}}">{{schoolname}}</option>
+</template>
+
+

@@ -2,22 +2,40 @@
   <title>Career Day Registration</title>
 </head>
 
+<template name="main">
+    {{> yield}}
+</template>
+
 <template name="home">
-    <a href="{{pathFor 'admin'}}">Admin</a>
-    <a href="{{pathFor 'register'}}">Register</a>
+    <nav>
+        <a href="{{pathFor 'roster'}}">Admin</a>
+        <a href="{{pathFor 'register'}}">Register</a>
+    </nav>
 </template>
 
 <template name="admin">
-    {{>loginButtons}}
+        <div><input type="submit" name="signout" value="Sign out" class="signout"></div>
+        <table>
+            <tr>
+                <td><a href="{{pathFor 'roster'}}">Roster</a></td>
+                <td><a href="{{pathFor 'schedule'}}">Schedule</a></td>
+                <td><a href="{{pathFor 'print'}}">Print</a></td>
+                <td><a href="{{pathFor 'controls'}}">Controls</a></td>
+            </tr>
+        </table>
     {{#if currentUser}}
-        {{> list}}
+        <div>
+            {{> yield}}
+        </div> 
+    {{else}}
+        <div>{{> loginButtons}}</div>
+        <nav><a href="{{pathFor 'home'}}">Home</a></nav>
     {{/if}}
-    <a href="{{pathFor 'home'}}">Home</a>
 </template>
 
 <template name="register">
-  {{> form}}
-  <a href="{{pathFor 'home'}}">Home</a>
+    <div>{{> form}}</div>
+    <nav><a href="{{pathFor 'home'}}">Home</a></nav>
 </template>
 
 <template name="form">
@@ -53,7 +71,10 @@
   </table>
 </template>
 
-<template name="list">
+<template name="tabs">
+</template>
+
+<template name="roster">
 	<table>
 		<thead>
 		<tr>
@@ -80,6 +101,17 @@
 	</table>
 </template>
 
+<template name="schedule">
+    Schedule
+</template>
+
+<template name="print">
+    Print
+</template>
+
+<template name="controls">
+    Controls
+</template>
 
 <template name="classlist">
 	<tr>

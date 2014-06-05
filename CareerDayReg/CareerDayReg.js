@@ -71,8 +71,8 @@ if (Meteor.isClient) {
         'click input.getcsv': function(){
             Meteor.call('generateCsvFile', function(error, filename){
                 if(error) throw error;
-                console.log(data);
-                Router.to(filename);
+                console.log(filename);
+                window.location = '/files/' + filename;
             });
         }
     });
@@ -162,7 +162,7 @@ if (Meteor.isServer) {
             for(var i=0; i<roster.length; i++) csvStream.write({FirstName: roster[i].fname, LastName: roster[i].lname, School: roster[i].schoolname, Class1: roster[i].classnames[0], Class2: roster[i].classnames[1], Class3: roster[i].classnames[2], Time: roster[i].time});
             
             csvStream.write(null);
-            return "roster";
+            return "roster.csv";
         }
     });
 

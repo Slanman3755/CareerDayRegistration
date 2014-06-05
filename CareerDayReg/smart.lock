@@ -3,13 +3,24 @@
   "dependencies": {
     "basePackages": {
       "iron-router": {},
-      "iron-router-auth": {}
+      "iron-router-auth": {},
+      "npm": {}
     },
     "packages": {
       "iron-router": {
         "git": "https://github.com/EventedMind/iron-router.git",
         "tag": "v0.7.1",
         "commit": "d1ffb3f06ea4c112132b030f2eb1a70b81675ecb"
+      },
+      "iron-router-auth": {
+        "git": "https://github.com/XpressiveCode/iron-router-auth.git",
+        "tag": "v0.2.1",
+        "commit": "39b5d70326536641bc50a184d195aa3ac49ff4a5"
+      },
+      "npm": {
+        "git": "https://github.com/arunoda/meteor-npm.git",
+        "tag": "v0.2.6",
+        "commit": "177ab6118de5bf8cffb19481343d5762ff7a2aaf"
       },
       "blaze-layout": {
         "git": "https://github.com/EventedMind/blaze-layout.git",

@@ -1,6 +1,7 @@
 {
   "packages": {
     "iron-router": {},
-    "iron-router-auth": {}
+    "iron-router-auth": {},
+    "npm": {}
   }
 }

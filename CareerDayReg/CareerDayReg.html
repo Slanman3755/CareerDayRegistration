@@ -7,30 +7,52 @@
 </template>
 
 <template name="home">
-    <nav>
-        <a href="{{pathFor 'roster'}}">Admin</a>
-        <a href="{{pathFor 'register'}}">Register</a>
-    </nav>
+    <h1 id='hometext'>Career Conference</h1>
+    <a href="{{pathFor 'register'}}"><h3>Click here to register!</h3></a>
+    <nav><a href="{{pathFor 'roster'}}">Admin</a></nav>
+</template>
+
+<template name="success">
+    <h1>You have succesfully registered for the Career Conference!</h1>
+    <nav><a href="{{pathFor 'home'}}">Home</a></nav>
 </template>
 
 <template name="admin">
-        <div><input type="submit" name="signout" value="Sign out" class="signout"></div>
-        <table>
-            <tr>
-                <td><a href="{{pathFor 'roster'}}">Roster</a></td>
-                <td><a href="{{pathFor 'schedule'}}">Schedule</a></td>
-                <td><a href="{{pathFor 'print'}}">Print</a></td>
-                <td><a href="{{pathFor 'controls'}}">Controls</a></td>
-            </tr>
-        </table>
+    <div><h2>Administrative Control Panel</h2></div>
+    {{#if currentUser}}
+        <div>
+            Logged in as {{getCurrentUsername}}
+            <input type="submit" name="signout" value="Sign out" class="signout">
+        </div>
+    {{/if}}
+    <table>
+        <tr>
+            <td><a href="{{pathFor 'roster'}}"><h3>Roster</h3></a></td>
+            <td><a href="{{pathFor 'schedule'}}"><h3>Schedule</h3></a></td>
+            <td><a href="{{pathFor 'print'}}"><h3>Print</h3></a></td>
+            <td><a href="{{pathFor 'controls'}}"><h3>Controls</h3></a></td>
+       </tr>
+    </table>
     {{#if currentUser}}
         <div>
             {{> yield}}
         </div> 
     {{else}}
-        <div>{{> loginButtons}}</div>
-        <nav><a href="{{pathFor 'home'}}">Home</a></nav>
+        <table>
+            <tr>
+                <td>Username:</td>
+                <td><input type="text" value="" name="username" id="username" class="username"></td>
+            </tr>
+            <tr>
+                <td>Password:</td>
+                <td><input type="password"  value="" name="password" id="password" class="password"></td>
+            </tr>
+            <tr>
+                <input type="submit" value="Login" name="login" class="login">
+            </tr>
+        </table>
     {{/if}}
+    <nav><a href="{{pathFor 'home'}}">Home</a></nav>
 </template>
 
 <template name="register">
@@ -84,6 +106,7 @@
 			{{#each classesheader}}
 				<td>Class {{.}}</td>
 			{{/each}}
+            <td>Time</td>
 		</tr>
 		</thead>
 		<tbody>
@@ -95,6 +118,7 @@
 			{{#each classnames}}
 				<td>{{.}}</td>
 			{{/each}}
+            <td>{{time}}</td>
 		</tr>
 		{{/each}}
 	</tbody>
@@ -106,7 +130,7 @@
 </template>
 
 <template name="print">
-    Print
+    <input type="submit" value="Get CSV File" name="getcsv" id="getcsv" class="getcsv">
 </template>
 
 <template name="controls">

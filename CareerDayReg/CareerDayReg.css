@@ -1,7 +1,10 @@
 /* CSS declarations go here */
-body{ 	background-color:black;
-		color:green;
-	}
+body    {   background-color:black;
+		    color:green;
+	    } 
 
-#alert {	color: red;
-		}
+a   {   color:green;
+    }   
+
+#alert  {	color: red;
+	    }

@@ -9,15 +9,22 @@ var classnames = ["Math",
                     "History",
                     "Art"];
 
-var schoolnames = ["Richmond High School",
-                    "Seton Catholic High School",
-                    "Lincoln High School",
-                    "Centerville High School",
-                    "Northeastern High School"];
+var schoolcodes = ["10001","10002","10003","10004","10005"];
 
+var schoolnames = [ "Richmond High School",
+                    "Centerville High School",
+                    "Northeastern High School",
+                    "Lincoln High School",
+                    "Seton Catholic High School"]
+
+var registrationEnabled = false;
 //Accounts.config({forbidClientAccountCreation: true});
 
 if (Meteor.isClient) {
+    
+    Meteor.startup(function(){
+        registrationControlMsgUpdate();
+    });
 
     Template.roster.students = function(){
 		return Students.find();
@@ -34,6 +41,17 @@ if (Meteor.isClient) {
     Template.form.RegisterMsg = function(){
         return Session.get("registermsg");
     }
+    
+    Template.controls.ControlMsg = function() {
+        return Session.get("controlmsg");
+    }
+
+    Template.controls.RegistrationControlButton = function() {
+        return Session.get("registrationcontrolbutton");
+    }
+    
+    Handlebars.registerHelper('isRegistrationEnabled', function(){
+    });
 
     Handlebars.registerHelper('classesheader', function(){
         var students = Students.find().fetch();
@@ -52,7 +70,17 @@ if (Meteor.isClient) {
             return count;
         else
             return 0;
-    } 
+    }
+
+    function registrationControlMsgUpdate() {
+        if(registrationEnabled) {
+            Session.set('registrationcontrolbutton', "Disable Registration");
+            Session.set('controlmsg', "Registration is enabled");
+        } else {
+            Session.set('registrationcontrolbutton', "Enable Registration");
+            Session.set('controlmsg', "Registration is disabled");    
+        }
+    }
 
     Handlebars.registerHelper('livecount', liveCount);
     
@@ -74,32 +102,45 @@ if (Meteor.isClient) {
                 console.log(filename);
                 window.location = '/files/' + filename;
             });
+        },
+        
+        'click input.togglereg': function(){
+            registrationEnabled=!registrationEnabled;
+            
+            $('input.togglereg').prop('disabled', true);
+            setTimeout(function(){
+                registrationControlMsgUpdate()
+                $('input.togglereg').prop('disabled', false);
+            }, 3000);
         }
     });
     
 	Template.form.events({
     	'click input.register': function(){
-      		var fname = $('input.fname').val();
+      		if(registrationEnabled) {
+            var fname = $('input.fname').val();
       		var lname = $('input.lname').val();
-            var schoolname = $('select.schoolselect :selected').val();
+            var schoolcode = $('input.schoolcode').val();
             var checked = $('input.classcheck:checked');
-
+            
+            var school = Schools.findOne({schoolcode: schoolcode});
+            
             if(fname!="" && lname!="") {
-            if(schoolname!="none") {
+            if(school!=null) {
             if(checked.length==3) {
                 var ids = [0,0,0];
                 var classnames = ["","",""];
                 var i = 0;
                 var overflowed = false;
                 checked.each(function(){
-                if(liveCount(Classes.findOne({_id: $(this).data("meteor-id")}).classname)<30)
-                    ids[i] = $(this).data("meteor-id");
-                else {
-                    overflowed = true;
-                    return false;
-                }
-                i++;
-            });
+                    if(liveCount(Classes.findOne({_id: $(this).data("meteor-id")}).classname)<30) {
+                        ids[i] = $(this).data("meteor-id");
+                    } else {
+                        overflowed = true;
+                        return false;
+                    }
+                    i++;
+                });
 
             if(!overflowed) {    
                 for(var i=0; i<ids.length; i++) {
@@ -107,7 +148,7 @@ if (Meteor.isClient) {
                 }
                     
                 Meteor.call('getServerTime', function(error, time) {
-                    Students.insert({fname:fname, lname:lname, schoolname:schoolname, classnames:classnames, time:time});
+                    Students.insert({fname:fname, lname:lname, schoolname:school.schoolname, classnames:classnames, time:time});
                 });
 
                 $('input.register').prop("disabled", true);
@@ -123,10 +164,12 @@ if (Meteor.isClient) {
             } else
                 Session.set("registermsg", "Please select exactly 3 classes");
             } else
-                Session.set("registermsg", "Please select a school");
+                Session.set("registermsg", "Please input a valid school code");
             } else
                 Session.set("registermsg", "Please input a first and last name");
-    	    }
+    	    } else
+                Session.set("registermsg", "Registration is currently disabled");
+        }
     })
 }
 
@@ -173,6 +216,6 @@ if (Meteor.isServer) {
 
         if (Schools.find().count() === 0)
         for (var i = 0; i < schoolnames.length; i++)
-            Schools.insert({schoolname: schoolnames[i]});      
+            Schools.insert({schoolname: schoolnames[i], schoolcode:schoolcodes[i]});      
   	    });
 }

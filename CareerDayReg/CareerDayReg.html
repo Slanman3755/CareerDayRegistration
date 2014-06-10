@@ -72,13 +72,8 @@
 		<td><input type="text" value="" name="lname" id="lname" class="lname"></td>
 	</tr>
 	<tr>
-		<td><h4>School</h4></td>
-		<td><select name="schoolselect" id="schoolselect" class="schoolselect">
-			<option value="none">Select a school</option>
-			{{#each schools}}
-				{{> schooloption}}
-			{{/each}}
-		</select></td>
+		<td><h4>School Code</h4></td>
+		<td><input type="text" value="" name="schoolcode" id="schoolcode" class="schoolcode"></td>
 	</tr>
 	<tr>
 		<td><h4>Choose 3 classes</h4></td>
@@ -93,11 +88,8 @@
   </table>
 </template>
 
-<template name="tabs">
-</template>
-
 <template name="roster">
-	<table>
+	<table class="table">
 		<thead>
 		<tr>
 			<td>First Name</td>
@@ -134,7 +126,8 @@
 </template>
 
 <template name="controls">
-    Controls
+    <h4 id="alert">{{ControlMsg}}</h4>
+    <input type="submit" value="{{RegistrationControlButton}}" name="togglereg" id="togglereg" class="togglereg">
 </template>
 
 <template name="classlist">

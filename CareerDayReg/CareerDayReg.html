@@ -22,7 +22,7 @@
     {{#if currentUser}}
         <div>
             Logged in as {{getCurrentUsername}}
-            <input type="submit" name="signout" value="Sign out" class="signout">
+            <button type="submit" name="signout" id="signout" class="btn btn-default">Signout</button>
         </div>
     {{/if}}
     <table>
@@ -48,7 +48,7 @@
                 <td><input type="password"  value="" name="password" id="password" class="password"></td>
             </tr>
             <tr>
-                <input type="submit" value="Login" name="login" class="login">
+                <button type="submit" id="login" name="login" class="btn btn-default">Login</button>
             </tr>
         </table>
     {{/if}}
@@ -82,7 +82,7 @@
 		{{> classlist}}
 	{{/each}}
 	<tr>
-		<td><input type="submit" name="register" value="Register" class="register"/></td>
+        <td><button type="submit" name="register" id="register" class="btn btn-default">Register</button></td>
 		<td><h4 id="alert">{{RegisterMsg}}</h4></td>
 	</tr>
   </table>
@@ -103,18 +103,40 @@
 		</thead>
 		<tbody>
 		{{#each students}}
-		<tr>
-			<td>{{fname}}</td>
-			<td>{{lname}}</td>
-			<td>{{schoolname}}</td>
-			{{#each classnames}}
-				<td>{{.}}</td>
-			{{/each}}
-            <td>{{time}}</td>
-		</tr>
+            {{> entry}}
 		{{/each}}
 	</tbody>
 	</table>
+</template>
+
+<template name="entry">
+    <tr>
+        {{#unless entrySelected _id}}
+            <td>{{fname}}</td>
+		    <td>{{lname}}</td>
+		    <td>{{schoolname}}</td>
+		    {{#each classnames}}
+			    <td>{{.}}</td>
+		    {{/each}}
+            <td>{{time}}</td>
+            <td>
+                <button type="submit" name="editentry" class="btn btn-default editentry">Edit</button>
+                <button type="submit" name="deleteentry" class="btn btn-default deleteentry">Delete</button>
+            </td>
+        {{else}}
+            <td><input type="text" value="{{fname}}" name="fnameentry" class="form-control fnameentry"/></td>
+            <td><input type="text" value="{{lname}}" name="lnameentry" class="form-control lnameentry"/></td>
+            <td><input type="text" value="{{schoolname}}" name="schoolnameentry" class="form-control schoolnameentry"/></td>
+            {{#each classnames}}
+                <td><input type="text" value="{{.}}" name="classnameentry" class="form-control classnameentry"/></td>
+            {{/each}}
+            <td><input type="text" value="{{time}}" name="timeentry" class="form-control timeentry"/></td>
+            <td>
+                <button type="submit" name="saveentry" class="btn btn-default saveentry">Save</button>
+                <button type="submit" name="cancelentry" class="btn btn-default cancelentry">Cancel</button>
+            </td>
+        {{/unless}}
+    </tr>
 </template>
 
 <template name="schedule">
@@ -122,23 +144,17 @@
 </template>
 
 <template name="print">
-    <input type="submit" value="Get CSV File" name="getcsv" id="getcsv" class="getcsv">
+    <button type="submit" name="getcsv" id="getcsv" class="btn btn-default">Get CSV File</button>
 </template>
 
 <template name="controls">
     <h4 id="alert">{{ControlMsg}}</h4>
-    <input type="submit" value="{{RegistrationControlButton}}" name="togglereg" id="togglereg" class="togglereg">
+    <button type="submit" name="togglereg" id="togglereg" class="btn btn-default">{{RegistrationControlButton}}</button>
 </template>
 
 <template name="classlist">
 	<tr>
-		<td><input type="checkbox" data-meteor-id="{{_id}}" class="classcheck" id="{{classname}}">{{classname}}</td>
+		<td><input type="checkbox" data-meteor-id="{{_id}}" name="classcheck" class="classcheck" id="classcheck">{{classname}}</td>
 		<td>{{livecount classname}}/30</td>
 	</tr>
 </template>
-
-<template name="schooloption">
-	<option value="{{schoolname}}">{{schoolname}}</option>
-</template>
-
-

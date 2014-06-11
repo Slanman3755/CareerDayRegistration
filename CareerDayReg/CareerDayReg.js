@@ -24,6 +24,7 @@ if (Meteor.isClient) {
     
     Meteor.startup(function(){
         registrationControlMsgUpdate();
+        Session.set('selectedEntries',[]);
     });
 
     Template.roster.students = function(){
@@ -49,8 +50,10 @@ if (Meteor.isClient) {
     Template.controls.RegistrationControlButton = function() {
         return Session.get("registrationcontrolbutton");
     }
-    
-    Handlebars.registerHelper('isRegistrationEnabled', function(){
+
+    Handlebars.registerHelper('entrySelected', function(id){
+        var selectedEntries = Session.get('selectedEntries');
+        return (_.indexOf(selectedEntries, id)>=0);
     });
 
     Handlebars.registerHelper('classesheader', function(){
@@ -85,18 +88,18 @@ if (Meteor.isClient) {
     Handlebars.registerHelper('livecount', liveCount);
     
     Template.admin.events({
-        'click input.signout': function(){ 
+        'click #signout': function(){ 
             Meteor.logout();
         },
 
-        'click input.login': function(){
+        'click #login': function(){
             var username = $('input.username').val();
             var password = $('input.password').val();
 
             Meteor.loginWithPassword(username, password);
         },
         
-        'click input.getcsv': function(){
+        'click #getcsv': function(){
             Meteor.call('generateCsvFile', function(error, filename){
                 if(error) throw error;
                 console.log(filename);
@@ -104,24 +107,58 @@ if (Meteor.isClient) {
             });
         },
         
-        'click input.togglereg': function(){
+        'click #togglereg': function(){
             registrationEnabled=!registrationEnabled;
             
-            $('input.togglereg').prop('disabled', true);
+            $('#togglereg').prop('disabled', true);
             setTimeout(function(){
                 registrationControlMsgUpdate()
-                $('input.togglereg').prop('disabled', false);
+                $('#togglereg').prop('disabled', false);
             }, 3000);
+        },
+
+        'click .editentry': function(){
+            var selectedEntries = Session.get('selectedEntries');
+            selectedEntries.push(this._id);
+            Session.set('selectedEntries', selectedEntries);
+        },
+
+        'click .deleteentry': function(){
+            var selectedEntries = Session.get('selectedEntries');
+            Students.remove({_id: this._id});
+            Session.set('selectedEntries', selectedEntries);
+        },
+
+        'click .saveentry': function(){ 
+            var fname = $('.fnameentry').val();
+      		var lname = $('.lnameentry').val();
+            var schoolname = $('.schoolnameentry').val();
+            var time = $('.timeentry').val();
+            var classnames = $.makeArray($('.classnameentry').map(function(){
+                return $(this).val();
+            }));
+
+            Students.update({_id: this._id},{fname: fname, lname: lname, schoolname: schoolname, classnames: classnames, time: time});
+
+            var selectedEntries = Session.get('selectedEntries');
+            selectedEntries = _.without(selectedEntries, this._id);
+            Session.set('selectedEntries', selectedEntries);
+        },
+
+        'click .cancelentry': function(){
+            var selectedEntries = Session.get('selectedEntries');
+            selectedEntries = _.without(selectedEntries, this._id);
+            Session.set('selectedEntries', selectedEntries);
         }
     });
     
 	Template.form.events({
-    	'click input.register': function(){
+    	'click #register': function(){
       		if(registrationEnabled) {
-            var fname = $('input.fname').val();
-      		var lname = $('input.lname').val();
-            var schoolcode = $('input.schoolcode').val();
-            var checked = $('input.classcheck:checked');
+            var fname = $('#fname').val();
+      		var lname = $('#lname').val();
+            var schoolcode = $('#schoolcode').val();
+            var checked = $('#classcheck:checked');
             
             var school = Schools.findOne({schoolcode: schoolcode});
             
@@ -151,9 +188,9 @@ if (Meteor.isClient) {
                     Students.insert({fname:fname, lname:lname, schoolname:school.schoolname, classnames:classnames, time:time});
                 });
 
-                $('input.register').prop("disabled", true);
+                $('#register').prop("disabled", true);
                 setTimeout(function(){
-                $('input.register').prop("disabled", false);
+                $('#register').prop("disabled", false);
                 }, 5000);
                 
                 Session.set("registermsg", "");

@@ -22,7 +22,7 @@
     {{#if currentUser}}
         <div>
             Logged in as {{getCurrentUsername}}
-            <button type="submit" name="signout" id="signout" class="btn btn-default">Signout</button>
+            <button type="submit" name="signout" class="btn btn-default signout">Signout</button>
         </div>
     {{/if}}
     <table>
@@ -48,7 +48,7 @@
                 <td><input type="password"  value="" name="password" id="password" class="password"></td>
             </tr>
             <tr>
-                <button type="submit" id="login" name="login" class="btn btn-default">Login</button>
+                <button type="submit" name="login" class="btn btn-default login">Login</button>
             </tr>
         </table>
     {{/if}}
@@ -82,7 +82,7 @@
 		{{> classlist}}
 	{{/each}}
 	<tr>
-        <td><button type="submit" name="register" id="register" class="btn btn-default">Register</button></td>
+        <td><button type="submit" name="register" class="btn btn-default register">Register</button></td>
 		<td><h4 id="alert">{{RegisterMsg}}</h4></td>
 	</tr>
   </table>
@@ -144,12 +144,12 @@
 </template>
 
 <template name="print">
-    <button type="submit" name="getcsv" id="getcsv" class="btn btn-default">Get CSV File</button>
+    <button type="submit" name="getcsv" class="btn btn-default getcsv">Get CSV File</button>
 </template>
 
 <template name="controls">
     <h4 id="alert">{{ControlMsg}}</h4>
-    <button type="submit" name="togglereg" id="togglereg" class="btn btn-default">{{RegistrationControlButton}}</button>
+    <button type="submit" name="togglereg" class="btn btn-default togglereg">{{RegistrationControlButton}}</button>
 </template>
 
 <template name="classlist">

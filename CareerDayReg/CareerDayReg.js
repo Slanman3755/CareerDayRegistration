@@ -20,10 +20,11 @@ var schoolnames = [ "Richmond High School",
 //Accounts.config({forbidClientAccountCreation: true});
 
 if (Meteor.isClient) {
-    
+
     Meteor.startup(function(){
         registrationControlMsgUpdate();
         Session.set('selectedEntries',[]);
+        Session.set('registermsg',"");
     });
 
     Template.roster.students = function(){
@@ -89,18 +90,18 @@ if (Meteor.isClient) {
     Handlebars.registerHelper('livecount', liveCount);
     
     Template.admin.events({
-        'click #signout': function(){ 
+        'click .signout': function(){ 
             Meteor.logout();
         },
 
-        'click #login': function(){
+        'click .login': function(){
             var username = $('input.username').val();
             var password = $('input.password').val();
 
             Meteor.loginWithPassword(username, password);
         },
         
-        'click #getcsv': function(){
+        'click .getcsv': function(){
             Meteor.call('generateCsvFile', function(error, filename){
                 if(error) throw error;
                 console.log(filename);
@@ -108,13 +109,13 @@ if (Meteor.isClient) {
             });
         },
         
-        'click #togglereg': function(){
+        'click .togglereg': function(){
             Meteor.call('toggleRegistrationEnabled', function(error,data){
             
-                $('#togglereg').prop('disabled', true);
+                $('.togglereg').prop('disabled', true);
                 setTimeout(function(){
                     registrationControlMsgUpdate()
-                    $('#togglereg').prop('disabled', false);
+                    $('.togglereg').prop('disabled', false);
                 }, 3000);
             });
         },
@@ -155,13 +156,13 @@ if (Meteor.isClient) {
     });
     
 	Template.form.events({
-    	'click #register': function(){
+    	'click .register': function(){
             Meteor.call('isRegistrationEnabled', function(error,enabled){
       		if(enabled) {
-            var fname = $('#fname').val();
-      		var lname = $('#lname').val();
-            var schoolcode = $('#schoolcode').val();
-            var checked = $('#classcheck:checked');
+            var fname = $('.fname').val();
+      		var lname = $('.lname').val();
+            var schoolcode = $('.schoolcode').val();
+            var checked = $('.classcheck:checked');
             
             var school = Schools.findOne({schoolcode: schoolcode});
             
@@ -191,9 +192,9 @@ if (Meteor.isClient) {
                     Students.insert({fname:fname, lname:lname, schoolname:school.schoolname, classnames:classnames, time:time});
                 });
 
-                $('#register').prop("disabled", true);
+                $('.register').prop("disabled", true);
                 setTimeout(function(){
-                $('#register').prop("disabled", false);
+                $('.register').prop("disabled", false);
                 }, 5000);
                 
                 Session.set("registermsg", "");
@@ -261,7 +262,7 @@ if (Meteor.isServer) {
     });
 
   	Meteor.startup(function () {
-        
+        //Accounts.createUser({email:'admin',username:'admin',password:'admin'});
         if (Classes.find().count() === 0)
         for (var i = 0; i < classnames.length; i++)
             Classes.insert({classname: classnames[i]});

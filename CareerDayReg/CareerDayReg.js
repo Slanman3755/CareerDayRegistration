@@ -17,7 +17,6 @@ var schoolnames = [ "Richmond High School",
                     "Lincoln High School",
                     "Seton Catholic High School"]
 
-var registrationEnabled = false;
 //Accounts.config({forbidClientAccountCreation: true});
 
 if (Meteor.isClient) {
@@ -76,13 +75,15 @@ if (Meteor.isClient) {
     }
 
     function registrationControlMsgUpdate() {
-        if(registrationEnabled) {
+        Meteor.call('isRegistrationEnabled', function(error,enabled){
+            if(enabled) {
             Session.set('registrationcontrolbutton', "Disable Registration");
-            Session.set('controlmsg', "Registration is enabled");
-        } else {
-            Session.set('registrationcontrolbutton', "Enable Registration");
-            Session.set('controlmsg', "Registration is disabled");    
-        }
+                Session.set('controlmsg', "Registration is enabled");
+            } else {
+                Session.set('registrationcontrolbutton', "Enable Registration");
+                Session.set('controlmsg', "Registration is disabled");    
+            }
+        });
     }
 
     Handlebars.registerHelper('livecount', liveCount);
@@ -108,13 +109,14 @@ if (Meteor.isClient) {
         },
         
         'click #togglereg': function(){
-            registrationEnabled=!registrationEnabled;
+            Meteor.call('toggleRegistrationEnabled', function(error,data){
             
-            $('#togglereg').prop('disabled', true);
-            setTimeout(function(){
-                registrationControlMsgUpdate()
-                $('#togglereg').prop('disabled', false);
-            }, 3000);
+                $('#togglereg').prop('disabled', true);
+                setTimeout(function(){
+                    registrationControlMsgUpdate()
+                    $('#togglereg').prop('disabled', false);
+                }, 3000);
+            });
         },
 
         'click .editentry': function(){
@@ -154,7 +156,8 @@ if (Meteor.isClient) {
     
 	Template.form.events({
     	'click #register': function(){
-      		if(registrationEnabled) {
+            Meteor.call('isRegistrationEnabled', function(error,enabled){
+      		if(enabled) {
             var fname = $('#fname').val();
       		var lname = $('#lname').val();
             var schoolcode = $('#schoolcode').val();
@@ -206,12 +209,15 @@ if (Meteor.isClient) {
                 Session.set("registermsg", "Please input a first and last name");
     	    } else
                 Session.set("registermsg", "Registration is currently disabled");
+            });
         }
     })
 }
 
 if (Meteor.isServer) {
     
+    registrationEnabled = false;
+
     csv = Meteor.require('fast-csv');
     fs = Meteor.require('fs');
     
@@ -243,10 +249,19 @@ if (Meteor.isServer) {
             
             csvStream.write(null);
             return "roster.csv";
+        },
+
+        isRegistrationEnabled: function(){
+            return registrationEnabled;
+        },
+
+        toggleRegistrationEnabled: function(){
+            registrationEnabled = !registrationEnabled;
         }
     });
 
   	Meteor.startup(function () {
+        
         if (Classes.find().count() === 0)
         for (var i = 0; i < classnames.length; i++)
             Classes.insert({classname: classnames[i]});

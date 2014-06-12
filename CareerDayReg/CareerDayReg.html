@@ -25,14 +25,12 @@
             <button type="submit" name="signout" class="btn btn-default signout">Signout</button>
         </div>
     {{/if}}
-    <table>
-        <tr>
-            <td><a href="{{pathFor 'roster'}}"><h3>Roster</h3></a></td>
-            <td><a href="{{pathFor 'schedule'}}"><h3>Schedule</h3></a></td>
-            <td><a href="{{pathFor 'print'}}"><h3>Print</h3></a></td>
-            <td><a href="{{pathFor 'controls'}}"><h3>Controls</h3></a></td>
-       </tr>
-    </table>
+        <ul class="nav nav-tabs">
+            <li><a href="{{pathFor 'roster'}}"><h3>Roster</h3></a></li>
+            <li><a href="{{pathFor 'schedule'}}"><h3>Schedule</h3></a></li>
+            <li><a href="{{pathFor 'print'}}"><h3>Print</h3></a></li>
+            <li><a href="{{pathFor 'controls'}}"><h3>Controls</h3></a></li>
+        </ul>
     {{#if currentUser}}
         <div>
             {{> yield}}
@@ -41,11 +39,11 @@
         <table>
             <tr>
                 <td>Username:</td>
-                <td><input type="text" value="" name="username" id="username" class="username"></td>
+                <td><input type="text" value="" name="username" id="username" class="form-control username"></td>
             </tr>
             <tr>
                 <td>Password:</td>
-                <td><input type="password"  value="" name="password" id="password" class="password"></td>
+                <td><input type="password"  value="" name="password" id="password" class="form-control password"></td>
             </tr>
             <tr>
                 <button type="submit" name="login" class="btn btn-default login">Login</button>
@@ -65,15 +63,15 @@
   <table>
 	<tr>
 		<td><h4>First Name</h4></td>
-		<td><input type="text" value="" name="fname" id="fname" class="fname"></td>
+		<td><input type="text" value="" name="fname" id="fname" class="form-control fname"></td>
 	</tr>
 	<tr>
 		<td><h4>Last Name</h4></td>
-		<td><input type="text" value="" name="lname" id="lname" class="lname"></td>
+		<td><input type="text" value="" name="lname" id="lname" class="form-control lname"></td>
 	</tr>
 	<tr>
 		<td><h4>School Code</h4></td>
-		<td><input type="text" value="" name="schoolcode" id="schoolcode" class="schoolcode"></td>
+		<td><input type="text" value="" name="schoolcode" id="schoolcode" class="form-control schoolcode"></td>
 	</tr>
 	<tr>
 		<td><h4>Choose 3 classes</h4></td>
@@ -89,27 +87,46 @@
 </template>
 
 <template name="roster">
-	<table class="table">
+    <div class="row">
+        <div class="col-lg-4">
+            <input type="text" name="searchfield" class="form-control searchfield" placeholder="Search Roster">
+        </div>
+        <div class="col-lg-4" id="alert">
+            <h4>{{SearchMsg}}</h4>
+        </div>
+    </div>
+    <table class="table">
 		<thead>
 		<tr>
-			<td>First Name</td>
-			<td>Last Name</td>
-			<td>School</td>
+            <td><h4>First Name</h4><button input="submit" name="firstabcsort" class="btn btn-default firstabcsort">Sort</button></td>
+            <td><h4>Last Name</h4><button input="submit" name="lastabcsort" class="btn btn-default lastabcsort">Sort</button></td>
+            <td><h4>School</h4></td>
 			{{#each classesheader}}
-				<td>Class {{.}}</td>
+                <td><h4>Class {{.}}</h4></td>
 			{{/each}}
-            <td>Time</td>
+            <td><h4>Time<button input="submit" name="timesort" class="btn btn-default timesort">Sort</button></h4></td>
 		</tr>
 		</thead>
 		<tbody>
-		{{#each students}}
-            {{> entry}}
-		{{/each}}
+        {{#if sortTypeFirstABC}}
+            {{#each studentsfirstabc}}
+                {{> entry}}
+            {{/each}}
+        {{else}}{{#if sortTypeLastABC}}
+            {{#each studentslastabc}}
+                {{> entry}}
+            {{/each}}
+        {{else}}
+            {{#each studentstime}}
+                {{> entry}}
+            {{/each}}
+        {{/if}}{{/if}}
 	</tbody>
 	</table>
 </template>
 
 <template name="entry">
+    {{#if entrySearched _id}}
     <tr>
         {{#unless entrySelected _id}}
             <td>{{fname}}</td>
@@ -119,10 +136,8 @@
 			    <td>{{.}}</td>
 		    {{/each}}
             <td>{{time}}</td>
-            <td>
-                <button type="submit" name="editentry" class="btn btn-default editentry">Edit</button>
-                <button type="submit" name="deleteentry" class="btn btn-default deleteentry">Delete</button>
-            </td>
+            <td><button type="submit" name="editentry" class="btn btn-default editentry">Edit</button></td>
+            <td><button type="submit" name="deleteentry" class="btn btn-default deleteentry">Delete</button></td>
         {{else}}
             <td><input type="text" value="{{fname}}" name="fnameentry" class="form-control fnameentry"/></td>
             <td><input type="text" value="{{lname}}" name="lnameentry" class="form-control lnameentry"/></td>
@@ -131,16 +146,17 @@
                 <td><input type="text" value="{{.}}" name="classnameentry" class="form-control classnameentry"/></td>
             {{/each}}
             <td><input type="text" value="{{time}}" name="timeentry" class="form-control timeentry"/></td>
-            <td>
-                <button type="submit" name="saveentry" class="btn btn-default saveentry">Save</button>
-                <button type="submit" name="cancelentry" class="btn btn-default cancelentry">Cancel</button>
-            </td>
+            <td><button type="submit" name="saveentry" class="btn btn-default saveentry">Save</button></td>
+            <td><button type="submit" name="cancelentry" class="btn btn-default cancelentry">Cancel</button></td>
         {{/unless}}
     </tr>
+    {{/if}}
 </template>
 
 <template name="schedule">
-    Schedule
+    {{#each classes}}
+        
+    {{/each}}
 </template>
 
 <template name="print">

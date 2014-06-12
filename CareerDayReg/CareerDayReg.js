@@ -23,13 +23,37 @@ if (Meteor.isClient) {
 
     Meteor.startup(function(){
         registrationControlMsgUpdate();
+        Session.set('searchedEntries',[]);
         Session.set('selectedEntries',[]);
         Session.set('registermsg',"");
+        Session.set('searchmsg',"");
+        Session.set('sortType',0);
     });
+
+    Router.onRun(function(){
+        registrationControlMsgUpdate();
+        Session.set('searchedEntries',[]);
+        Session.set('selectedEntries',[]);
+        Session.set('registermsg',"");
+        Session.set('searchmsg',"");
+        Session.set('sortType',0);
+    });   
 
     Template.roster.students = function(){
 		return Students.find();
 	}
+
+    Template.roster.studentsfirstabc = function(){
+        return Students.find({}, {sort: {fname: 1}});
+    }
+
+    Template.roster.studentslastabc = function(){
+        return Students.find({}, {sort: {lname: 1}});
+    }
+
+    Template.roster.studentstime = function(){
+        return Students.find({}, {sort: {time: -1}});
+    }
 
     Template.form.classes = function(){
         return Classes.find();
@@ -40,16 +64,35 @@ if (Meteor.isClient) {
     }
 
     Template.form.RegisterMsg = function(){
-        return Session.get("registermsg");
+        return Session.get('registermsg');
     }
     
+    Template.roster.SearchMsg = function(){
+        return Session.get('searchmsg');
+    }
+
     Template.controls.ControlMsg = function() {
-        return Session.get("controlmsg");
+        return Session.get('controlmsg');
     }
 
     Template.controls.RegistrationControlButton = function() {
-        return Session.get("registrationcontrolbutton");
+        return Session.get('registrationcontrolbutton');
     }
+    
+    Handlebars.registerHelper('sortTypeFirstABC', function(){
+        return Session.get('sortType')==1;
+    });
+
+    Handlebars.registerHelper('sortTypeLastABC', function(){
+        return Session.get('sortType')==2;
+    });
+
+    Handlebars.registerHelper('entrySearched', function(id){
+        var searchedEntries = Session.get('searchedEntries');
+        if(searchedEntries!=0) {
+            return (_.indexOf(searchedEntries, id)>=0);
+        } else return true;
+    });
 
     Handlebars.registerHelper('entrySelected', function(id){
         var selectedEntries = Session.get('selectedEntries');
@@ -127,9 +170,11 @@ if (Meteor.isClient) {
         },
 
         'click .deleteentry': function(){
-            var selectedEntries = Session.get('selectedEntries');
-            Students.remove({_id: this._id});
-            Session.set('selectedEntries', selectedEntries);
+            if(confirm("Are you sure you want to delete this entry?")) {
+                var selectedEntries = Session.get('selectedEntries');
+                Students.remove({_id: this._id});
+                Session.set('selectedEntries', selectedEntries);
+            }
         },
 
         'click .saveentry': function(){ 
@@ -152,6 +197,36 @@ if (Meteor.isClient) {
             var selectedEntries = Session.get('selectedEntries');
             selectedEntries = _.without(selectedEntries, this._id);
             Session.set('selectedEntries', selectedEntries);
+        },
+
+        'keyup .searchfield': function(){
+            var searchtext = String($('.searchfield').val());
+            var searchedStudents = Students.find({$or: [{fname: {$regex: searchtext, $options: 'i'}},
+                {lname: {$regex: searchtext, $options: 'i'}},
+                {schoolname: {$regex: searchtext, $options: 'i'}},
+                {classnames: {$regex: searchtext, $options: 'i'}},
+                {time: {$regex: searchtext, $options: 'i'}}
+                ]}).fetch();
+            
+            var searchedEntries = [];
+            for(var i = 0; i<searchedStudents.length; i++) searchedEntries.push(searchedStudents[i]._id);
+            
+            if(searchedEntries==0) Session.set('searchmsg',"No entries match your search");
+            else Session.set('searchmsg',"");
+
+            Session.set('searchedEntries', searchedEntries);
+        },
+
+        'click .timesort': function(){
+            Session.set('sortType', 0);
+        },
+
+        'click .firstabcsort': function(){
+            Session.set('sortType', 1);
+        }, 
+
+        'click .lastabcsort': function(){
+            Session.set('sortType', 2);
         }
     });
     
@@ -188,7 +263,8 @@ if (Meteor.isClient) {
                     classnames[i] = Classes.findOne({_id: ids[i]}).classname;
                 }
                     
-                Meteor.call('getServerTime', function(error, time) {
+                Meteor.call('getServerTime', function(error, timeobject) {
+                    time = timeobject.toISOString();
                     Students.insert({fname:fname, lname:lname, schoolname:school.schoolname, classnames:classnames, time:time});
                 });
 
@@ -231,8 +307,7 @@ if (Meteor.isServer) {
 
     Meteor.methods({
         getServerTime: function() {
-            var time = (new Date).toString();
-            return time;
+            return new Date;
         },
 
         generateCsvFile: function() {

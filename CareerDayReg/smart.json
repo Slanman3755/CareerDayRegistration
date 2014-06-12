@@ -2,6 +2,7 @@
   "packages": {
     "iron-router": {},
     "iron-router-auth": {},
-    "npm": {}
+    "npm": {},
+    "bootstrap-3": {}
   }
 }

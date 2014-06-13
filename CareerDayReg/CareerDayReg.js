@@ -51,6 +51,22 @@ if (Meteor.isClient) {
         return Students.find({}, {sort: {lname: 1}});
     }
 
+    Template.roster.studentsschool = function(){
+        return Students.find({}, {sort: {schoolname: 1}});
+    }
+
+    Template.roster.studentsclass1 = function(){
+        return Students.find({}, {sort: {classnames: 1}});
+    }
+
+    Template.roster.studentsclass2 = function(){
+        return Students.find({}, {sort: {classnames: 1}});
+    }
+
+    Template.roster.studentsclass3 = function(){
+        return Students.find({}, {sort: {classnames: 1}});
+    }
+
     Template.roster.studentstime = function(){
         return Students.find({}, {sort: {time: -1}});
     }
@@ -85,6 +101,22 @@ if (Meteor.isClient) {
 
     Handlebars.registerHelper('sortTypeLastABC', function(){
         return Session.get('sortType')==2;
+    });
+
+    Handlebars.registerHelper('sortTypeSchool', function(){
+        return Session.get('sortType')==3;
+    });
+
+    Handlebars.registerHelper('sortTypeClass1', function(){
+        return Session.get('sortType')==4;
+    });
+
+    Handlebars.registerHelper('sortTypeClass2', function(){
+        return Session.get('sortType')==5;
+    });
+
+    Handlebars.registerHelper('sortTypeClass3', function(){
+        return Session.get('sortType')==6;
     });
 
     Handlebars.registerHelper('entrySearched', function(id){
@@ -227,6 +259,15 @@ if (Meteor.isClient) {
 
         'click .lastabcsort': function(){
             Session.set('sortType', 2);
+        },
+
+        'click .schoolsort': function(){
+            Session.set('sortType', 3);
+        },
+
+        'click .classsort': function(){
+            
+            Session.set('sortType', 4);
         }
     });
     

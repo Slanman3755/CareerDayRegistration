@@ -14,7 +14,7 @@
 
 <template name="success">
     <h1>You have succesfully registered for the Career Conference!</h1>
-    <nav><a href="{{pathFor 'home'}}">Home</a></nav>
+    <nav><a href="{{pathFor 'home'}}"><h4>Home</h4></a></nav>
 </template>
 
 <template name="admin">
@@ -50,12 +50,12 @@
             </tr>
         </table>
     {{/if}}
-    <nav><a href="{{pathFor 'home'}}">Home</a></nav>
+    <nav><a href="{{pathFor 'home'}}"><h4>Home</h4></a></nav>
 </template>
 
 <template name="register">
     <div>{{> form}}</div>
-    <nav><a href="{{pathFor 'home'}}">Home</a></nav>
+    <nav><a href="{{pathFor 'home'}}"><h4>Home</h4></a></nav>
 </template>
 
 <template name="form">
@@ -97,15 +97,30 @@
     </div>
     <table class="table">
 		<thead>
-		<tr>
-            <td><h4>First Name</h4><button input="submit" name="firstabcsort" class="btn btn-default firstabcsort">Sort</button></td>
-            <td><h4>Last Name</h4><button input="submit" name="lastabcsort" class="btn btn-default lastabcsort">Sort</button></td>
-            <td><h4>School</h4></td>
+        <tr>
+            <td><div class="input-group">
+                <span class="input-group-addon">First Name</span>
+                <span class="input-group-btn"><button input="submit" name="firstabcsort" class="btn btn-default firstabcsort">Sort</button></span>
+            </div></td>
+            <td><div class="input-group">
+                <span class="input-group-addon">Last Name</span>
+                <span class="input-group-btn"><button input="submit" name="lastabcsort" class="btn btn-default lastabcsort">Sort</button></span>
+            </div></td>
+            <td><div class="input-group">
+                <span class="input-group-addon">School</span>
+                <span class="input-group-btn"><button input="submit" name="schoolsort" class="btn btn-default schoolsort">Sort</button></span>
+            </div></td>
 			{{#each classesheader}}
-                <td><h4>Class {{.}}</h4></td>
+                <td><div class="input-group">
+                    <span class="input-group-addon">Class {{.}}</span>
+                    <span class="input-group-btn"><button input="submit" name="classsort" class="btn btn-default classsort">Sort</button></span>
+                </div></td>
 			{{/each}}
-            <td><h4>Time<button input="submit" name="timesort" class="btn btn-default timesort">Sort</button></h4></td>
-		</tr>
+            <td><div class="input-group">
+                <span class="input-group-addon">Time</span>
+                <span class="input-group-btn"><button input="submit" name="timesort" class="btn btn-default timesort">Sort</button></span>
+            </div></td>
+        </tr>
 		</thead>
 		<tbody>
         {{#if sortTypeFirstABC}}
@@ -116,11 +131,30 @@
             {{#each studentslastabc}}
                 {{> entry}}
             {{/each}}
+        {{else}}{{#if sortTypeSchool}}
+            {{#each studentsschool}}
+                {{> entry}}
+            {{/each}}
+            
+        {{else}}{{#if sortTypeClass1}}
+            {{#each studentsclass1}}
+                {{> entry}}
+            {{/each}}
+            
+        {{else}}{{#if sortTypeClass2}}
+            {{#each studentsclass2}}
+                {{> entry}}
+            {{/each}}
+            
+        {{else}}{{#if sortTypeClass3}}
+            {{#each studentsclass3}}
+                {{> entry}}
+            {{/each}} 
         {{else}}
             {{#each studentstime}}
                 {{> entry}}
             {{/each}}
-        {{/if}}{{/if}}
+            {{/if}}{{/if}}{{/if}}{{/if}}{{/if}}{{/if}}
 	</tbody>
 	</table>
 </template>

@@ -71,8 +71,12 @@ if (Meteor.isClient) {
         return Students.find({}, {sort: {time: -1}});
     }
 
+    Template.schedule.classes = function(){
+        return Classes.find({}, {sort: {classname: 1}});     
+    }
+
     Template.form.classes = function(){
-        return Classes.find();
+        return Classes.find({}, {sort: {classname: 1}});
     }
 
     Template.form.schools = function(){

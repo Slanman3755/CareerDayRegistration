@@ -154,7 +154,7 @@
             {{#each studentstime}}
                 {{> entry}}
             {{/each}}
-            {{/if}}{{/if}}{{/if}}{{/if}}{{/if}}{{/if}}
+        {{/if}}{{/if}}{{/if}}{{/if}}{{/if}}{{/if}}
 	</tbody>
 	</table>
 </template>
@@ -187,10 +187,18 @@
     {{/if}}
 </template>
 
-<template name="schedule">
-    {{#each classes}}
-        
-    {{/each}}
+<template name="schedule">    
+    <table class="table">
+        {{#each classes}}
+            {{> classentry}}
+        {{/each}}
+    </table>
+</template>
+
+<template name="classentry">
+    <tr>
+        <td>{{classname}}</td>
+    </tr>
 </template>
 
 <template name="print">

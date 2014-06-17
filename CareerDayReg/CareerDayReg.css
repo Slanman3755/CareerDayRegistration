@@ -1,10 +1,33 @@
 /* CSS declarations go here */
-body    {   background-color:white;
-		    color:black;
-	    } 
+body {background-color:white;
+	  color:black;
+} 
 
-a   {   color:black;
-    }   
+a {color:black;
+}   
 
-#alert  {	color: red;
-	    }
+#alert {color: red;
+}
+
+.header-label-group {
+    position: relative;
+    border-collapse: separate;
+}
+
+.header-label {
+    border-spacing: 0;
+    padding: 6px 12px;
+    line-height: 1.42857143; 
+    font-size: 14px;
+    font-weight: normal;
+    min-height: 34px;
+    color: #555;
+    text-align: center;
+    background-color: #eee;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    white-space: nowrap;
+    vertical-align: middle;
+    display: table-cell;
+    box-sizing: border-box;
+}

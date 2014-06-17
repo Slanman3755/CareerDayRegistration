@@ -95,31 +95,30 @@
             <h4>{{SearchMsg}}</h4>
         </div>
     </div>
-    <table class="table">
+    <table class="table table-condensed table-striped">
 		<thead>
         <tr>
-            <td><div class="input-group">
+            <th><div class="input-group">
                 <span class="input-group-addon">First Name</span>
                 <span class="input-group-btn"><button input="submit" name="firstabcsort" class="btn btn-default firstabcsort">Sort</button></span>
-            </div></td>
-            <td><div class="input-group">
+            </div></th>
+            <th><div class="input-group">
                 <span class="input-group-addon">Last Name</span>
                 <span class="input-group-btn"><button input="submit" name="lastabcsort" class="btn btn-default lastabcsort">Sort</button></span>
-            </div></td>
-            <td><div class="input-group">
+            </div></th>
+            <th><div class="input-group">
                 <span class="input-group-addon">School</span>
                 <span class="input-group-btn"><button input="submit" name="schoolsort" class="btn btn-default schoolsort">Sort</button></span>
-            </div></td>
+            </div></th>
 			{{#each classesheader}}
-                <td><div class="input-group">
-                    <span class="input-group-addon">Class {{.}}</span>
-                    <span class="input-group-btn"><button input="submit" name="classsort" class="btn btn-default classsort">Sort</button></span>
-                </div></td>
+                <th class="header-label-group">
+                    <span class="header-label">Class {{.}}</span>
+                </th>
 			{{/each}}
-            <td><div class="input-group">
+            <th><div class="input-group">
                 <span class="input-group-addon">Time</span>
                 <span class="input-group-btn"><button input="submit" name="timesort" class="btn btn-default timesort">Sort</button></span>
-            </div></td>
+            </div></th>
         </tr>
 		</thead>
 		<tbody>
@@ -135,26 +134,11 @@
             {{#each studentsschool}}
                 {{> entry}}
             {{/each}}
-            
-        {{else}}{{#if sortTypeClass1}}
-            {{#each studentsclass1}}
-                {{> entry}}
-            {{/each}}
-            
-        {{else}}{{#if sortTypeClass2}}
-            {{#each studentsclass2}}
-                {{> entry}}
-            {{/each}}
-            
-        {{else}}{{#if sortTypeClass3}}
-            {{#each studentsclass3}}
-                {{> entry}}
-            {{/each}} 
         {{else}}
             {{#each studentstime}}
                 {{> entry}}
             {{/each}}
-        {{/if}}{{/if}}{{/if}}{{/if}}{{/if}}{{/if}}
+        {{/if}}{{/if}}{{/if}}
 	</tbody>
 	</table>
 </template>
@@ -169,9 +153,11 @@
 		    {{#each classnames}}
 			    <td>{{.}}</td>
 		    {{/each}}
-            <td>{{time}}</td>
-            <td><button type="submit" name="editentry" class="btn btn-default editentry">Edit</button></td>
-            <td><button type="submit" name="deleteentry" class="btn btn-default deleteentry">Delete</button></td>
+            <td class="col-lg-2">{{time}}</td>
+            <td class="col-lg-2"><div class="btn-group">
+                <button type="button" name="editentry" class="btn btn-default editentry">Edit</button>
+                <button type="button" name="deleteentry" class="btn btn-default deleteentry">Delete</button>
+            </div></td>
         {{else}}
             <td><input type="text" value="{{fname}}" name="fnameentry" class="form-control fnameentry"/></td>
             <td><input type="text" value="{{lname}}" name="lnameentry" class="form-control lnameentry"/></td>
@@ -179,26 +165,117 @@
             {{#each classnames}}
                 <td><input type="text" value="{{.}}" name="classnameentry" class="form-control classnameentry"/></td>
             {{/each}}
-            <td><input type="text" value="{{time}}" name="timeentry" class="form-control timeentry"/></td>
-            <td><button type="submit" name="saveentry" class="btn btn-default saveentry">Save</button></td>
-            <td><button type="submit" name="cancelentry" class="btn btn-default cancelentry">Cancel</button></td>
+            <td class="col-lg-2"><input type="text" value="{{time}}" name="timeentry" class="form-control timeentry"/></td>
+            <td class="col-lg-2"><div class="btn-group">
+                <button type="button" name="saveentry" class="btn btn-default saveentry">Save</button>
+                <button type="button" name="cancelentry" class="btn btn-default cancelentry">Cancel</button>
+            </div></td>
         {{/unless}}
     </tr>
     {{/if}}
 </template>
 
-<template name="schedule">    
-    <table class="table">
+<template name="schedule">
         {{#each classes}}
             {{> classentry}}
         {{/each}}
-    </table>
+        <div class="panel panel-default container">
+            <div align="center" class="panel-heading">
+                <button type="button" name="addnewclass" class="btn btn-default addnewclass">Add New Class</button>
+            </div>
+        </div>
 </template>
 
 <template name="classentry">
-    <tr>
-        <td>{{classname}}</td>
-    </tr>
+    <div class="panel panel-default container">
+        <table class="table table-condensed table-striped">
+            {{#unless classSelected _id}} 
+                <thead>
+                    <tr>
+                        <th>
+                            <div align="left">
+                                <h4>{{classname}}</h4>
+                            </div>
+                        </th>
+                        <th class="col-sm-2">
+                            <div align="center">
+                                <h4>Time Slot: {{timeslot classtimeslot}}</h4>
+                            </div>
+                        </th>
+                        <th class="col-sm-2">
+                            <div align="center">
+                                <h4>{{classgroup}}</h4>
+                            </div>
+                        </th>
+                        <th class="col-sm-1">
+                            <div align="right">
+                                <h4>{{livecount _id}}/{{classsizelimit}}</h4>
+                            </div>
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td colspan="4">
+                            {{classdescription}}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="4">
+                            <div align="right">
+                                <div class="btn-group">
+                                    <button type="button" name="editclass" class="editclass btn btn-default">Edit</button>
+                                    <button type="button" name="deleteclass" class="deleteclass btn btn-default">Delete</button>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            {{else}}
+                <thead>
+                    <tr>
+                        <th>
+                            <div align="left">
+                                Class Name: <input type="text" value="{{classname}}" name="classnameentry" class="form-control classnameentry">
+                            </div>
+                        </th>
+                        <th class="col-sm-2">
+                            <div align="center">
+                                Time Slot: <input type="text" value="{{classtimeslot}}" name="classtimeslotentry" class="form-control classtimeslotentry">
+                            </div>
+                        </th>
+                        <th class="col-sm-2">
+                            <div align="center">
+                                Group: <input type="text" value="{{classgroup}}" name="classgroupentry" class="form-control classgroupentry">
+                            </div>
+                        </th>
+                        <th class="col-sm-1">
+                            <div align="right">
+                                Size Limit: <input type="text" value="{{classsizelimit}}" name="classsizelimitentry" class="form-control classsizelimitentry">
+                            </div>
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td colspan="4">
+                            Description: <input type="text" value="{{classdescription}}" name="classdescriptionentry" class="form-control classdescriptionentry">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="4">
+                            <div align="right">
+                                <div class="btn-group">
+                                    <button type="button" name="saveclass" class="saveclass btn btn-default">Save</button>
+                                    <button type="button" name="cancelclass" class="cancelclass btn btn-default">Cancel</button>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody> 
+            {{/unless}}
+        </table>
+    </div>
 </template>
 
 <template name="print">
@@ -213,6 +290,6 @@
 <template name="classlist">
 	<tr>
 		<td><input type="checkbox" data-meteor-id="{{_id}}" name="classcheck" class="classcheck" id="classcheck">{{classname}}</td>
-		<td>{{livecount classname}}/30</td>
+        <td>{{livecount _id}}/{{classsizelimit}}</td>
 	</tr>
 </template>

@@ -25,6 +25,7 @@ if (Meteor.isClient) {
         registrationControlMsgUpdate();
         Session.set('searchedEntries',[]);
         Session.set('selectedEntries',[]);
+        Session.set('selectedClasses',[]);
         Session.set('registermsg',"");
         Session.set('searchmsg',"");
         Session.set('sortType',0);
@@ -34,6 +35,7 @@ if (Meteor.isClient) {
         registrationControlMsgUpdate();
         Session.set('searchedEntries',[]);
         Session.set('selectedEntries',[]);
+        Session.set('selectedClasses',[]);
         Session.set('registermsg',"");
         Session.set('searchmsg',"");
         Session.set('sortType',0);
@@ -131,8 +133,11 @@ if (Meteor.isClient) {
     });
 
     Handlebars.registerHelper('entrySelected', function(id){
-        var selectedEntries = Session.get('selectedEntries');
-        return (_.indexOf(selectedEntries, id)>=0);
+        return (_.indexOf(Session.get('selectedEntries'), id)>=0);
+    });
+
+    Handlebars.registerHelper('classSelected', function(id){
+        return (_.indexOf(Session.get('selectedClasses'), id)>=0);
     });
 
     Handlebars.registerHelper('classesheader', function(){
@@ -141,12 +146,18 @@ if (Meteor.isClient) {
             return _.range(1, students[0].classnames.length+1);
         else return [];
     });
-    
+   
+    Handlebars.registerHelper('timeslot', function(timeslot){
+        if(timeslot==0) return "All"
+        else return timeslot;
+    });
+
     Handlebars.registerHelper('getCurrentUsername', function(){
         return Meteor.user().emails[0].address;
     });
 
-    function liveCount(classname) {
+    function liveCount(_id) {
+        var classname = Classes.findOne({_id: _id}).classname;
         var count = Students.find({classnames: classname}).fetch().length;
         if(count!=null)
             return count;
@@ -207,9 +218,8 @@ if (Meteor.isClient) {
 
         'click .deleteentry': function(){
             if(confirm("Are you sure you want to delete this entry?")) {
-                var selectedEntries = Session.get('selectedEntries');
                 Students.remove({_id: this._id});
-                Session.set('selectedEntries', selectedEntries);
+                Session.set('selectedEntries', _.without(Session.get('selectedEntries'), this._id));
             }
         },
 
@@ -223,16 +233,41 @@ if (Meteor.isClient) {
             }));
 
             Students.update({_id: this._id},{fname: fname, lname: lname, schoolname: schoolname, classnames: classnames, time: time});
-
-            var selectedEntries = Session.get('selectedEntries');
-            selectedEntries = _.without(selectedEntries, this._id);
-            Session.set('selectedEntries', selectedEntries);
+            
+            Session.set('selectedEntries', _.without(Session.get('selectedEntries'), this._id));
         },
 
         'click .cancelentry': function(){
-            var selectedEntries = Session.get('selectedEntries');
-            selectedEntries = _.without(selectedEntries, this._id);
-            Session.set('selectedEntries', selectedEntries);
+            Session.set('selectedEntries', _.without(Session.get('selectedEntries'), this._id));
+        },
+
+        'click .editclass': function(){
+            var selectedClasses = Session.get('selectedClasses');
+            selectedClasses.push(this._id);
+            Session.set('selectedClasses', selectedClasses);
+        },
+
+        'click .deleteclass': function(){
+            if(confirm("Are you sure you want to delete this class?")) {
+                Classes.remove({_id: this._id});
+                Session.set('selectedClasses', _.without(Session.get('selectedClasses'), this._id));
+            }
+        },
+
+        'click .saveclass': function(){ 
+            var classname = $('.classnameentry').val();
+      		var classtimeslot = $('.classtimeslotentry').val();
+            var classgroup = $('.classgroupentry').val();
+            var classdescription = $('.classdescriptionentry').val();
+            var classsizelimit = $('.classsizelimitentry').val();
+
+            Classes.update({_id: this._id},{classname: classname, classtimeslot: classtimeslot, classgroup: classgroup, classdescription: classdescription, classsizelimit: classsizelimit});
+            
+            Session.set('selectedClasses', _.without(Session.get('selectedClasses'), this._id));
+        },
+
+        'click .cancelclass': function(){
+            Session.set('selectedClasses', _.without(Session.get('selectedClasses'), this._id));
         },
 
         'keyup .searchfield': function(){
@@ -269,9 +304,10 @@ if (Meteor.isClient) {
             Session.set('sortType', 3);
         },
 
-        'click .classsort': function(){
-            
-            Session.set('sortType', 4);
+        'click .addnewclass': function(){
+            var selectedClasses = Session.get('selectedClasses');
+            selectedClasses.push(Classes.insert({classname: "Name", classtimeslot: 0, classgroup: "Group", classdescription: "Description", classsizelimit: 30}));
+            Session.set('selectedClasses',selectedClasses);
         }
     });
     
@@ -294,7 +330,8 @@ if (Meteor.isClient) {
                 var i = 0;
                 var overflowed = false;
                 checked.each(function(){
-                    if(liveCount(Classes.findOne({_id: $(this).data("meteor-id")}).classname)<30) {
+                    var checkedClass = Classes.findOne({_id: $(this).data("meteor-id")});
+                    if(liveCount(checkedClass._id)<checkedClass.classsizelimit) {
                         ids[i] = $(this).data("meteor-id");
                     } else {
                         overflowed = true;
@@ -385,7 +422,7 @@ if (Meteor.isServer) {
         //Accounts.createUser({email:'admin',username:'admin',password:'admin'});
         if (Classes.find().count() === 0)
         for (var i = 0; i < classnames.length; i++)
-            Classes.insert({classname: classnames[i]});
+            Classes.insert({classname: classnames[i], classtimeslot: 0, classgroup: "Default", classdescription: "This is a class", classsizelimit: 30});
 
         if (Schools.find().count() === 0)
         for (var i = 0; i < schoolnames.length; i++)

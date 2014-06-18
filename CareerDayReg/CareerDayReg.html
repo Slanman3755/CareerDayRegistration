@@ -74,7 +74,7 @@
 		<td><input type="text" value="" name="schoolcode" id="schoolcode" class="form-control schoolcode"></td>
 	</tr>
 	<tr>
-		<td><h4>Choose 3 classes</h4></td>
+        <td><h4>Choose {{numClasses}} classes</h4></td>
 	</tr>
 	{{#each classes}}
 		{{> classlist}}
@@ -153,6 +153,9 @@
 		    {{#each classnames}}
 			    <td>{{.}}</td>
 		    {{/each}}
+            {{#each blankspaces classnames}}
+                <td></td>
+            {{/each}}
             <td class="col-lg-2">{{time}}</td>
             <td class="col-lg-2"><div class="btn-group">
                 <button type="button" name="editentry" class="btn btn-default editentry">Edit</button>
@@ -165,6 +168,9 @@
             {{#each classnames}}
                 <td><input type="text" value="{{.}}" name="classnameentry" class="form-control classnameentry"/></td>
             {{/each}}
+            {{#each blankspaces classnames}}
+                <td></td>
+            {{/each}}
             <td class="col-lg-2"><input type="text" value="{{time}}" name="timeentry" class="form-control timeentry"/></td>
             <td class="col-lg-2"><div class="btn-group">
                 <button type="button" name="saveentry" class="btn btn-default saveentry">Save</button>
@@ -176,14 +182,53 @@
 </template>
 
 <template name="schedule">
-        {{#each classes}}
-            {{> classentry}}
-        {{/each}}
-        <div class="panel panel-default container">
-            <div align="center" class="panel-heading">
-                <button type="button" name="addnewclass" class="btn btn-default addnewclass">Add New Class</button>
-            </div>
+    <div class="panel panel-default container">
+        <div align="center" class="panel-heading">
+            <table>
+                {{#unless editingScheduleSettings}}
+                <tr>
+                    <td>
+                        <div align="center">
+                            Number Of Time Slots/Classes To Register For: {{numClasses}}
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <div align="center">
+                            <button type="button" name="editschedulesettings" class="btn btn-default editschedulesettings">Edit Settings</button>
+                        </div>
+                    </td>
+                </tr>
+                {{else}}
+                <tr>
+                    <td>
+                        <div align="center">
+                            Number Of Time Slots/Classes To Register For:
+                            <input type="text" value="{{numClasses}}" name="timeslotsentry" class="timeslotsentry form-control">
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <div class="btn-group" align="center">
+                            <button type="button" name="saveschedulesettings" class="btn btn-default saveschedulesettings">Save Settings</button>
+                            <button type="button" name="cancelschedulesettings" class="btn btn-default cancelschedulesettings">Cancel Settings</button>
+                        </div>
+                    </td>
+                </tr> 
+                {{/unless}}
+            </table>
         </div>
+    </div>
+    {{#each classes}}
+        {{> classentry}}
+    {{/each}}
+    <div class="panel panel-default container">
+        <div align="center" class="panel-heading">
+            <button type="button" name="addnewclass" class="btn btn-default addnewclass">Add New Class</button>
+        </div>
+    </div>
 </template>
 
 <template name="classentry">

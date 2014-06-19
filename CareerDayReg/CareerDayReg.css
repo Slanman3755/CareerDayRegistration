@@ -31,3 +31,13 @@ a {color:black;
     display: table-cell;
     box-sizing: border-box;
 }
+
+ul {
+    list-style: none;
+}
+
+li {
+    display: block;
+    float: left;
+    padding: 10px;
+}

@@ -28,6 +28,7 @@
         <ul class="nav nav-tabs">
             <li><a href="{{pathFor 'roster'}}"><h3>Roster</h3></a></li>
             <li><a href="{{pathFor 'schedule'}}"><h3>Schedule</h3></a></li>
+            <li><a href="{{pathFor 'schools'}}"><h3>Schools</h3></a></li>
             <li><a href="{{pathFor 'print'}}"><h3>Print</h3></a></li>
             <li><a href="{{pathFor 'controls'}}"><h3>Controls</h3></a></li>
         </ul>
@@ -89,7 +90,7 @@
 <template name="roster">
     <div class="row">
         <div class="col-lg-4">
-            <input type="text" name="searchfield" class="form-control searchfield" placeholder="Search Roster">
+            <input type="search" name="searchfield" class="form-control searchfield" placeholder="Search Roster">
         </div>
         <div class="col-lg-4" id="alert">
             <h4>{{SearchMsg}}</h4>
@@ -184,7 +185,14 @@
 <template name="schedule">
     <div class="panel panel-default container">
         <div align="center" class="panel-heading">
-            <table>
+            <table class="table">
+                <tr>
+                    <td>
+                        <div align="center">
+                            <h4>Settings</h4>
+                        </div>
+                    </td>
+                </tr>
                 {{#unless editingScheduleSettings}}
                 <tr>
                     <td>
@@ -221,9 +229,24 @@
             </table>
         </div>
     </div>
+    <div class="panel panel-default container">
+        <div align="center" class="panel-body">
+            <div><h4>Groups</h4></div>
+            {{#each clusters}}
+                <ul>
+                    {{> clusterentry}}
+                </ul>
+            {{/each}}
+        </div>
+    </div>
     {{#each classes}}
         {{> classentry}}
     {{/each}}
+    
+    {{#if addingNewClass}}
+        {{> newclassentry}}
+    {{/if}}
+
     <div class="panel panel-default container">
         <div align="center" class="panel-heading">
             <button type="button" name="addnewclass" class="btn btn-default addnewclass">Add New Class</button>
@@ -262,7 +285,7 @@
                 <tbody>
                     <tr>
                         <td colspan="4">
-                            {{classdescription}}
+                            {{{classdescription}}}
                         </td>
                     </tr>
                     <tr>
@@ -281,22 +304,26 @@
                     <tr>
                         <th>
                             <div align="left">
-                                Class Name: <input type="text" value="{{classname}}" name="classnameentry" class="form-control classnameentry">
+                                Class Name:
+                                <input type="text" value="{{classname}}" name="classnameentry" class="form-control classnameentry">
                             </div>
                         </th>
                         <th class="col-sm-2">
                             <div align="center">
-                                Time Slot: <input type="text" value="{{classtimeslot}}" name="classtimeslotentry" class="form-control classtimeslotentry">
+                                Time Slot:
+                                <input type="text" value="{{classtimeslot}}" name="classtimeslotentry" class="form-control classtimeslotentry">
                             </div>
                         </th>
                         <th class="col-sm-2">
                             <div align="center">
-                                Group: <input type="text" value="{{classgroup}}" name="classgroupentry" class="form-control classgroupentry">
+                                Group:
+                                <input type="text" value="{{classgroup}}" name="classgroupentry" class="form-control classgroupentry">
                             </div>
                         </th>
                         <th class="col-sm-1">
                             <div align="right">
-                                Size Limit: <input type="text" value="{{classsizelimit}}" name="classsizelimitentry" class="form-control classsizelimitentry">
+                                Size Limit:
+                                <input type="text" value="{{classsizelimit}}" name="classsizelimitentry" class="form-control classsizelimitentry">
                             </div>
                         </th>
                     </tr>
@@ -304,7 +331,8 @@
                 <tbody>
                     <tr>
                         <td colspan="4">
-                            Description: <input type="text" value="{{classdescription}}" name="classdescriptionentry" class="form-control classdescriptionentry">
+                            Description:
+                            <textarea rows=4 style="resize:vertical;" name="classdescriptionentry" class="form-control classdescriptionentry">{{classdescription}}</textarea>
                         </td>
                     </tr>
                     <tr>
@@ -321,6 +349,158 @@
             {{/unless}}
         </table>
     </div>
+</template>
+
+<template name="newclassentry">
+<div class="panel panel-default container">
+    <table class="table table-condensed table-striped">
+        <thead>
+            <tr>
+                <th>
+                    <div align="left">
+                        Class Name:
+                        <input type="text" value="" name="classnameentry" class="form-control classnameentry">
+                    </div>
+                </th>
+                <th class="col-sm-2">
+                    <div align="center">
+                        Time Slot:
+                        <input type="text" value="" name="classtimeslotentry" class="form-control classtimeslotentry">
+                    </div>
+                </th>
+                <th class="col-sm-2">
+                    <div align="center">
+                        Group:
+                        <input type="text" value="" name="classgroupentry" class="form-control classgroupentry">
+                    </div>
+                </th>
+                <th class="col-sm-1">
+                    <div align="right">
+                        Size Limit:
+                        <input type="text" value="" name="classsizelimitentry" class="form-control classsizelimitentry">
+                    </div>
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+        <tr>
+            <td colspan="4">
+                Description:
+                <textarea rows=4 style="resize:vertical;" name="classdescriptionentry" class="form-control classdescriptionentry"></textarea>
+            </td>
+        </tr>
+        <tr>
+            <td colspan="4">
+                <div align="right">
+                    <div class="btn-group">
+                        <button type="button" name="savenewclass" class="savenewclass btn btn-default">Save</button>
+                        <button type="button" name="cancelnewclass" class="cancelnewclass btn btn-default">Cancel</button>
+                    </div>
+                </div>
+            </td>
+        </tr>
+        </tbody> 
+    </table>
+</div>
+
+</template>
+
+<template name="clusterentry">
+{{#unless clusterSelected _id}}
+    <li>
+    <div align="center">
+        <h5>{{clustername}}</h5>
+    </div>
+    <div align="center">
+        <div class="btn-group">
+            <button class="btn btn-default editcluster" name="editcluster">Edit</button>
+            <button class="btn btn-default deletecluster" name="deletecluster">Delete</button>
+        </div>
+    </div>
+    </li>
+{{else}}
+    <li>
+    <div align="center">
+        <input type="text" value="{{clustername}}" name="clusternameentry" class="form-control clusternameentry">
+    </div>
+    <div align="center">
+        <div class="btn-group">
+            <button class="btn btn-default savecluster" name="savecluster">Save</button>
+            <button class="btn btn-default cancelcluster" name="cancelcluster">Cancel</button>
+        </div>
+    </div>
+    </li>
+{{/unless}}
+</template>
+
+<template name="schools">
+<table class="table table-condensed table-striped">
+    <thead>
+        <tr>
+            <th>
+                Name
+            </th>
+            <th>
+                Code
+            </th>
+            <th>
+                Login
+            </th>
+            <th>
+                Password
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        {{#each schools}}
+            {{> schoolentry}}
+        {{/each}}
+    </tbody>
+</table>
+</template>
+
+<template name="schoolentry">
+    <tr>
+        {{#unless schoolSelected _id}}
+        <td>
+            {{schoolname}}
+        </td>
+        <td>
+            {{schoolcode}}
+        </td>
+        <td>
+            {{schoollogin}}
+        </td>
+        <td>
+            {{schoolpassword}}
+        </td>
+        <td>
+            <div class="btn-group">
+                <button type="button" name="editschool" class="btn btn-default editschool">Edit</button>
+                <button type="button" name="deleteschool" class="btn btn-default deleteschool">Delete</button> 
+            </div>
+        </td>
+        {{else}}
+        <td>
+            <input type="text" value="{{schoolname}}" name="schoolnameentry" class="form-control schoolnameentry">
+        </td>
+        <td>
+            <input type="text" value="{{schoolcode}}" name="schoolcodeentry" class="form-control schoolcodeentry">
+        </td>
+        <td>
+            <input type="text" value="{{schoollogin}}" name="schoolloginentry" class="form-control schoolloginentry">
+        </td>
+        <td>
+            <input type="text" value="{{schoolpassword}}" name="schoolpasswordentry" class="form-control schoolpasswordentry">
+        </td>
+        <td>
+            <div class="btn-group">
+                <button type="button" name="saveschool" class="btn btn-default saveschool">Save</button>
+                <button type="button" name="cancelschool" class="btn btn-default cancelschool">Cancel</button> 
+            </div>
+        </td> 
+        {{/unless}}
+    </tr>
 </template>
 
 <template name="print">

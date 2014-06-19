@@ -5,6 +5,7 @@ Router.map(function() {
 
     this.route('roster', {path: '/admin/controlpanel/roster/', layoutTemplate: 'admin'});
     this.route('schedule', {path: '/admin/controlpanel/schedule/', layoutTemplate: 'admin'});
+    this.route('schools', {path: '/admin/controlpanel/schools/', layoutTemplate: 'admin'});
     this.route('print', {path: '/admin/controlpanel/print/', layoutTemplate: 'admin'});
     this.route('controls', {path: '/admin/controlpanel/controls/', layoutTemplate: 'admin'});
 });

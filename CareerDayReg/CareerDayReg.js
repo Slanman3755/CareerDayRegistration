@@ -45,7 +45,10 @@ if (Meteor.isClient) {
         Session.set('sortType',0);
         Session.set('maxlength', 0);
         Session.set('isEditingScheduleSettings', false);
-        Session.set('newclassentry', false);
+        Session.set('addnewclass', false);
+        Session.set('addnewentry', false);
+        Session.set('addnewcluster', false);
+        Session.set('addnewschool', false); 
     });
 
     Router.onRun(function(){
@@ -61,7 +64,10 @@ if (Meteor.isClient) {
         Session.set('sortType',0);
         Session.set('maxlength',0);
         Session.set('isEditingScheduleSettings', false);
-        Session.set('newclassentry', false);
+        Session.set('addnewclass', false);
+        Session.set('addnewentry', false);
+        Session.set('addnewcluster', false);
+        Session.set('addnewschool', false);
     });   
 
     Template.roster.students = function(){
@@ -88,11 +94,27 @@ if (Meteor.isClient) {
         return Classes.find({}, {sort: {classname: 1}});     
     }
 
+    Template.entry.classes = function(){
+        return Classes.find({}, {sort: {classname: 1}}); 
+    }
+
+    Template.newentry.classes = function(){
+        return Classes.find({}, {sort: {classname: 1}}); 
+    }
+
     Template.form.classes = function(){
         return Classes.find({}, {sort: {classname: 1}});
     }
 
     Template.form.schools = function(){
+        return Schools.find({}, {sort: {schoolname: 1}});
+    }
+    
+    Template.entry.schools = function(){
+        return Schools.find({}, {sort: {schoolname: 1}});
+    }
+
+    Template.newentry.schools = function(){
         return Schools.find({}, {sort: {schoolname: 1}});
     }
 
@@ -123,7 +145,13 @@ if (Meteor.isClient) {
     Template.controls.RegistrationControlButton = function() {
         return Session.get('registrationcontrolbutton');
     }
-    
+   
+    Handlebars.registerHelper('equals', function(param1, param2){
+        console.log(param1);
+        console.log(param2);
+        return param1==param2;
+    });
+
     Handlebars.registerHelper('sortTypeFirstABC', function(){
         return Session.get('sortType')==1;
     });
@@ -173,6 +201,18 @@ if (Meteor.isClient) {
 
     Handlebars.registerHelper('addingNewClass', function(){
         return Session.get('addnewclass');
+    });
+
+    Handlebars.registerHelper('addingNewEntry', function(){
+        return Session.get('addnewentry');
+    });
+ 
+    Handlebars.registerHelper('addingNewCluster', function(){
+        return Session.get('addnewcluster');
+    });
+
+    Handlebars.registerHelper('addingNewSchool', function(){
+        return Session.get('addnewschool');
     });
 
     Handlebars.registerHelper('classesheader', function(){
@@ -292,8 +332,26 @@ if (Meteor.isClient) {
             Session.set('selectedEntries', _.without(Session.get('selectedEntries'), this._id));
         },
 
+        'click .savenewentry': function(){
+            var fname = $('.fnameentry').val();
+      		var lname = $('.lnameentry').val();
+            var schoolname = $('.schoolnameentry').val();
+            var time = $('.timeentry').val();
+            var classnames = $.makeArray($('.classnameentry').map(function(){
+                return $(this).val();
+            }));
+
+            Students.insert({fname: fname, lname: lname, schoolname: schoolname, classnames: classnames, time: time});
+            
+            Session.set('addnewentry', false);
+        },
+
         'click .cancelentry': function(){
             Session.set('selectedEntries', _.without(Session.get('selectedEntries'), this._id));
+        },
+
+        'click .cancelnewentry': function(){
+            Session.set('addnewentry', false);
         },
 
         'click .editclass': function(){
@@ -321,8 +379,24 @@ if (Meteor.isClient) {
             Session.set('selectedClasses', _.without(Session.get('selectedClasses'), this._id));
         },
 
+        'click .savenewclass': function(){
+            var classname = $('.classnameentry').val();
+      		var classtimeslot = $('.classtimeslotentry').val();
+            var classgroup = $('.classgroupentry').val();
+            var classdescription = $('.classdescriptionentry').val();
+            var classsizelimit = $('.classsizelimitentry').val();
+
+            Classes.insert({classname: classname, classtimeslot: classtimeslot, classgroup: classgroup, classdescription: classdescription, classsizelimit: classsizelimit});
+            
+            Session.set('addnewclass', false);
+        },
+
         'click .cancelclass': function(){
             Session.set('selectedClasses', _.without(Session.get('selectedClasses'), this._id));
+        },
+
+        'click .cancelnewclass': function(){
+            Session.set('addnewclass', false);
         },
 
         'keyup .searchfield': function(){
@@ -360,7 +434,19 @@ if (Meteor.isClient) {
         },
 
         'click .addnewclass': function(){
-            Session.set('newclassentry',true);
+            Session.set('addnewclass',true);
+        },
+
+        'click .addnewentry': function(){
+            Session.set('addnewentry',true);
+        },
+
+        'click .addnewcluster': function(){
+            Session.set('addnewcluster',true);
+        },
+
+        'click .addnewschool': function(){
+            Session.set('addnewschool',true);
         },
 
         'click .editschedulesettings': function(){
@@ -398,8 +484,20 @@ if (Meteor.isClient) {
             Session.set('selectedClusters', _.without(Session.get('selectedClusters'), this._id));
         },
 
+        'click .savenewcluster': function(){
+            var clustername = $('.clusternameentry').val();
+
+            Clusters.insert({clustername: clustername});
+             
+            Session.set('addnewcluster', false);
+        },
+
         'click .cancelcluster': function(){
             Session.set('selectedClusters', _.without(Session.get('selectedClusters'), this._id));
+        },
+
+        'click .cancelnewcluster': function(){
+            Session.set('addnewcluster', false);
         },
 
         'click .editschool': function(){
@@ -426,8 +524,23 @@ if (Meteor.isClient) {
             Session.set('selectedSchools', _.without(Session.get('selectedSchools'), this._id));
         },
 
+        'click .savenewschool': function(){
+            var schoolname = $('.schoolnameentry').val();
+            var schoolcode = $('.schoolcodeentry').val();
+            var schoollogin = $('.schoolloginentry').val();
+            var schoolpassword = $('.schoolpasswordentry').val();
+
+            Schools.insert({schoolname: schoolname, schoolcode: schoolcode, schoollogin: schoollogin, schoolpassword: schoolpassword});
+
+            Session.set('addnewschool', false);
+        },
+
         'click .cancelschool': function(){
             Session.set('selectedClusters', _.without(Session.get('selectedClusters'), this._id));
+        },
+
+        'click .cancelnewschool': function(){
+            Session.set('addnewschool', false);
         }
     });
     

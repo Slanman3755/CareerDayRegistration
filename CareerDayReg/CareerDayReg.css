@@ -1,12 +1,15 @@
 /* CSS declarations go here */
-body {background-color:white;
-	  color:black;
+body {
+    background-color:white;
+	color:black;
 } 
 
-a {color:black;
+a {
+    color:black;
 }   
 
-#alert {color: red;
+#alert {
+    color: red;
 }
 
 .header-label-group {

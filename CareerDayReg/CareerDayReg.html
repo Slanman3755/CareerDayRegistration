@@ -140,6 +140,16 @@
                 {{> entry}}
             {{/each}}
         {{/if}}{{/if}}{{/if}}
+        
+        {{#if addingNewEntry}}
+            {{> newentry}}
+        {{/if}}
+        
+        <tr>
+            <td>
+                <button type="button" name="addnewentry" class="btn btn-default addnewentry">Add New Student</button>
+            </td>
+        </tr>
 	</tbody>
 	</table>
 </template>
@@ -165,9 +175,29 @@
         {{else}}
             <td><input type="text" value="{{fname}}" name="fnameentry" class="form-control fnameentry"/></td>
             <td><input type="text" value="{{lname}}" name="lnameentry" class="form-control lnameentry"/></td>
-            <td><input type="text" value="{{schoolname}}" name="schoolnameentry" class="form-control schoolnameentry"/></td>
+            <td>
+                <select name="schoolnameentry" class="form-control schoolnameentry">
+                    {{#each schools}}
+                        {{#unless equals ../schoolname schoolname}}
+                            <option value="{{schoolname}}">{{schoolname}}</option>
+                        {{else}}
+                            <option value="{{schoolname}}" selected>{{schoolname}}</option>
+                        {{/unless}}
+                    {{/each}}
+                </select>
+            </td>
             {{#each classnames}}
-                <td><input type="text" value="{{.}}" name="classnameentry" class="form-control classnameentry"/></td>
+                <td>
+                    <select name="classnameentry" class="form-control classnameentry">
+                        {{#each classes}}
+                            {{#unless equals .. classname}}
+                                <option value="{{classname}}">{{classname}}</option>
+                            {{else}}
+                                <option value="{{classname}}" selected>{{classname}}</option>
+                            {{/unless}}
+                        {{/each}}
+                    </select>
+                </td>
             {{/each}}
             {{#each blankspaces classnames}}
                 <td></td>
@@ -180,6 +210,34 @@
         {{/unless}}
     </tr>
     {{/if}}
+</template>
+
+<template name="newentry">
+    <tr>
+        <td><input type="text" name="fnameentry" class="form-control fnameentry"/></td>
+        <td><input type="text" name="lnameentry" class="form-control lnameentry"/></td>
+        <td>
+            <select name="schoolnameentry" class="form-control schoolnameentry">
+                {{#each schools}}
+                    <option value="{{schoolname}}">{{schoolname}}</option>
+                {{/each}}
+            </select>
+        </td>
+        {{#each classesheader}}
+            <td>
+                <select name="classnameentry" class="form-control classnameentry">
+                    {{#each classes}}
+                        <option value="{{classname}}">{{classname}}</option>
+                    {{/each}}
+                </select>
+            </td>
+        {{/each}}
+        <td class="col-lg-2"><input type="text" name="timeentry" class="form-control timeentry"/></td>
+        <td class="col-lg-2"><div class="btn-group">
+            <button type="button" name="savenewentry" class="btn btn-default savenewentry">Save</button>
+            <button type="button" name="cancelnewentry" class="btn btn-default cancelnewentry">Cancel</button>
+        </div></td>
+    </tr>
 </template>
 
 <template name="schedule">
@@ -230,13 +288,20 @@
         </div>
     </div>
     <div class="panel panel-default container">
+        <div align="center" class="panel-heading"><h4>Groups</h4></div>
         <div align="center" class="panel-body">
-            <div><h4>Groups</h4></div>
-            {{#each clusters}}
-                <ul>
+            <ul>
+                {{#each clusters}}
                     {{> clusterentry}}
-                </ul>
-            {{/each}}
+                {{/each}}
+
+                {{#if addingNewCluster}}
+                    {{> newclusterentry}}
+                {{/if}}
+            </ul>
+        </div>
+        <div align="center" class="">
+            <button type="button" name="addnewcluster" class="btn btn-default addnewcluster">Add New</button>
         </div>
     </div>
     {{#each classes}}
@@ -433,6 +498,20 @@
 {{/unless}}
 </template>
 
+<template name="newclusterentry">
+    <li>
+    <div align="center">
+        <input type="text" name="clusternameentry" class="form-control clusternameentry">
+    </div>
+    <div align="center">
+        <div class="btn-group">
+            <button class="btn btn-default savenewcluster" name="savenewcluster">Save</button>
+            <button class="btn btn-default cancelnewcluster" name="cancelnewcluster">Cancel</button>
+        </div>
+    </div>
+    </li> 
+</template>
+
 <template name="schools">
 <table class="table table-condensed table-striped">
     <thead>
@@ -455,6 +534,16 @@
         {{#each schools}}
             {{> schoolentry}}
         {{/each}}
+
+        {{#if addingNewSchool}}
+            {{> newschoolentry}}
+        {{/if}}
+
+        <tr>
+            <td>
+                <button type="button" name="addnewschool" class="btn btn-default addnewschool">Add New School</button>
+            </td>
+        </tr>
     </tbody>
 </table>
 </template>
@@ -500,6 +589,29 @@
             </div>
         </td> 
         {{/unless}}
+    </tr>
+</template>
+
+<template name="newschoolentry">
+    <tr>
+        <td>
+            <input type="text" name="schoolnameentry" class="form-control schoolnameentry">
+        </td>
+        <td>
+            <input type="text" name="schoolcodeentry" class="form-control schoolcodeentry">
+        </td>
+        <td>
+            <input type="text" name="schoolloginentry" class="form-control schoolloginentry">
+        </td>
+        <td>
+            <input type="text" name="schoolpasswordentry" class="form-control schoolpasswordentry">
+        </td>
+        <td>
+            <div class="btn-group">
+            <button type="button" name="savenewschool" class="btn btn-default savenewschool">Save</button>
+            <button type="button" name="cancelnewschool" class="btn btn-default cancelnewschool">Cancel</button> 
+            </div>
+        </td>
     </tr>
 </template>
 

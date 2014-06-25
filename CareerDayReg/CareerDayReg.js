@@ -130,6 +130,14 @@ if (Meteor.isClient) {
         return Clusters.find({}, {sort: {clustername: 1}});
     }
 
+    Template.classentry.clusters = function(){
+        return Clusters.find({}, {sort: {clustername: 1}});
+    }
+
+    Template.newclassentry.clusters = function(){
+        return Clusters.find({}, {sort: {clustername: 1}});
+    }
+
     Template.form.RegisterMsg = function(){
         return Session.get('registermsg');
     }
@@ -147,9 +155,13 @@ if (Meteor.isClient) {
     }
    
     Handlebars.registerHelper('equals', function(param1, param2){
-        console.log(param1);
-        console.log(param2);
         return param1==param2;
+    });
+
+    Handlebars.registerHelper('loop', function(n){
+        var loop = [];
+        for(var i = 0; i<=n; i++) loop.push(i);
+        return loop;
     });
 
     Handlebars.registerHelper('sortTypeFirstABC', function(){
@@ -191,7 +203,15 @@ if (Meteor.isClient) {
         return Session.get('numClasses');
     }
 
-    Template.form.numClasses= function() {
+    Template.form.numClasses = function() {
+        return Session.get('numClasses');
+    }
+
+    Template.classentry.numClasses = function() {
+        return Session.get('numClasses');
+    }
+
+    Template.newclassentry.numClasses = function() {
         return Session.get('numClasses');
     }
 
@@ -536,7 +556,7 @@ if (Meteor.isClient) {
         },
 
         'click .cancelschool': function(){
-            Session.set('selectedClusters', _.without(Session.get('selectedClusters'), this._id));
+            Session.set('selectedSchools', _.without(Session.get('selectedSchools'), this._id));
         },
 
         'click .cancelnewschool': function(){
@@ -611,7 +631,7 @@ if (Meteor.isClient) {
 if (Meteor.isServer) {
     
     registrationEnabled = false;
-    numClasses = 4;
+    numClasses = 3;
 
     csv = Meteor.require('fast-csv');
     fs = Meteor.require('fs');

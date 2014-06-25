@@ -146,7 +146,7 @@
         {{/if}}
         
         <tr>
-            <td>
+            <td colspan="10">
                 <button type="button" name="addnewentry" class="btn btn-default addnewentry">Add New Student</button>
             </td>
         </tr>
@@ -376,13 +376,29 @@
                         <th class="col-sm-2">
                             <div align="center">
                                 Time Slot:
-                                <input type="text" value="{{classtimeslot}}" name="classtimeslotentry" class="form-control classtimeslotentry">
+                                <select name="classtimeslotentry" class="form-control classtimeslotentry">
+                                    {{#each loop numClasses}}
+                                        {{#unless equals ../classtimeslot .}}
+                                            <option value="{{.}}">{{.}}</option>
+                                        {{else}}
+                                            <option value="{{.}}" selected>{{.}}</option>
+                                        {{/unless}}
+                                    {{/each}}
+                                </select>
                             </div>
                         </th>
                         <th class="col-sm-2">
                             <div align="center">
                                 Group:
-                                <input type="text" value="{{classgroup}}" name="classgroupentry" class="form-control classgroupentry">
+                                <select name="classgroupentry" class="form-control classgroupentry">
+                                    {{#each clusters}}
+                                        {{#unless equals ../classgroup clustername}}
+                                            <option value="{{clustername}}">{{clustername}}</option>
+                                        {{else}}
+                                            <option value="{{clustername}}" selected>{{clustername}}</option>
+                                        {{/unless}}
+                                    {{/each}}
+                                </select>
                             </div>
                         </th>
                         <th class="col-sm-1">
@@ -430,13 +446,21 @@
                 <th class="col-sm-2">
                     <div align="center">
                         Time Slot:
-                        <input type="text" value="" name="classtimeslotentry" class="form-control classtimeslotentry">
+                        <select name="classgroupentry" class="form-control classgroupentry">
+                            {{#each loop numClasses}}
+                                <option value="{{.}}">{{.}}</option>
+                            {{/each}}
+                        </select>
                     </div>
                 </th>
                 <th class="col-sm-2">
                     <div align="center">
                         Group:
-                        <input type="text" value="" name="classgroupentry" class="form-control classgroupentry">
+                        <select name="classgroupentry" class="form-control classgroupentry">
+                            {{#each clusters}}
+                                <option value="{{clustername}}">{{clustername}}</option>
+                            {{/each}}
+                        </select>
                     </div>
                 </th>
                 <th class="col-sm-1">
@@ -540,7 +564,7 @@
         {{/if}}
 
         <tr>
-            <td>
+            <td colspan="10">
                 <button type="button" name="addnewschool" class="btn btn-default addnewschool">Add New School</button>
             </td>
         </tr>

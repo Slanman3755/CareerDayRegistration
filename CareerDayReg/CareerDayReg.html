@@ -101,7 +101,7 @@
         <div class="input-group" style="max-width: 200px;">
             <span class="input-group-addon">Timeslot {{sum . 1}}</span>
             <select class="form-control classselect" name="classselect">
-                {{#each classes}}
+                {{#each classesAtTime .}}
                     <option data-meteor-id="{{_id}}" value="{{classname}}">{{classname}}</option>
                 {{/each}}
             </select>
@@ -208,11 +208,11 @@
                     {{/each}}
                 </select>
             </td>
-            {{#each classnames}}
+            {{#each keyvalue classnames}}
                 <td>
                     <select name="classnameentry" class="form-control classnameentry">
-                        {{#each classes}}
-                            {{#unless equals .. classname}}
+                        {{#each classesAtTime key}}
+                            {{#unless equals ../value classname}}
                                 <option value="{{classname}}">{{classname}}</option>
                             {{else}}
                                 <option value="{{classname}}" selected>{{classname}}</option>
@@ -245,10 +245,10 @@
                 {{/each}}
             </select>
         </td>
-        {{#each classesheader}}
+        {{#each key classesheader}}
             <td>
                 <select name="classnameentry" class="form-control classnameentry">
-                    {{#each classes}}
+                    {{#each classesAtTime key}}
                         <option value="{{classname}}">{{classname}}</option>
                     {{/each}}
                 </select>
@@ -347,7 +347,7 @@
             {{#unless classSelected _id}} 
                 <thead>
                     <tr>
-                        <th>
+                        <th class="col-sm-2">
                             <div align="left">
                                 <h4>{{classname}}</h4>
                             </div>
@@ -357,26 +357,36 @@
                                 <h4>Time Slot: {{timeslot classtimeslot}}</h4>
                             </div>
                         </th>
-                        <th class="col-sm-2">
+                        <th class="col-sm-1">
                             <div align="center">
                                 <h4>{{classgroup}}</h4>
                             </div>
                         </th>
-                        <th class="col-sm-1">
-                            <div align="right">
-                                <h4>{{livecount _id}}/{{classsizelimit}}</h4>
-                            </div>
-                        </th>
+                        {{#if equals classtimeslot "0"}}
+                            {{#each loop numClasses}}
+                                <th class="col-sm-1">
+                                    <div align="right">
+                                        <h4>{{livecount ../_id .}}/{{../classsizelimit}}</h4>
+                                    </div>
+                                </th>
+                            {{/each}}
+                        {{else}}
+                            <th class="col-sm-1">
+                                <div align="right">
+                                    <h4>{{livecount _id classtimeslot}}/{{classsizelimit}}</h4>
+                                </div>
+                            </th>
+                        {{/if}}
                     </tr>
                 </thead>
                 <tbody>
                     <tr>
-                        <td colspan="4">
+                        <td colspan="8">
                             {{{classdescription}}}
                         </td>
                     </tr>
                     <tr>
-                        <td colspan="4">
+                        <td colspan="8">
                             <div align="right">
                                 <div class="btn-group">
                                     <button type="button" name="editclass" class="editclass btn btn-default">Edit</button>
@@ -399,11 +409,11 @@
                             <div align="center">
                                 Time Slot:
                                 <select name="classtimeslotentry" class="form-control classtimeslotentry">
-                                    {{#each loop sum numClasses 1}}
+                                    {{#each inclusiveloop numClasses}}
                                         {{#unless equals ../classtimeslot .}}
-                                            <option value="{{.}}">{{.}}</option>
+                                            <option value="{{.}}">{{timeslot .}}</option>
                                         {{else}}
-                                            <option value="{{.}}" selected>{{.}}</option>
+                                            <option value="{{.}}" selected>{{timeslot .}}</option>
                                         {{/unless}}
                                     {{/each}}
                                 </select>
@@ -469,8 +479,8 @@
                     <div align="center">
                         Time Slot:
                         <select name="classgroupentry" class="form-control classgroupentry">
-                            {{#each loop numClasses}}
-                                <option value="{{.}}">{{.}}</option>
+                            {{#each inclusiveloop numClasses}}
+                                <option value="{{.}}">{{timeslot .}}</option>
                             {{/each}}
                         </select>
                     </div>
@@ -662,7 +672,65 @@
 </template>
 
 <template name="print">
-    <button type="submit" name="getcsv" class="btn btn-default getcsv">Get CSV File</button>
+    <button type="submit" name="getcsv" class="offset btn btn-default getcsv">Get CSV File</button>
+    <div class="panel panel-default nametag">
+        <div class="panel-body">
+            <div>
+                Last Name, First Name
+            </div>
+            <div>
+                School
+            </div>
+            <div>
+                Schedule
+            </div>
+            <div>
+                9:10-9:30   Session 1 Room #
+            </div>
+            <div>
+                9:35-9:55   Session 2 Room #
+            </div>
+            <div>
+                10:05-10:25 Session 3 Room #
+            </div>
+            <div>
+                10:30-11:00 Session 4 Room #
+            </div>
+        </div>
+    </div>
+    {{#if printing}}
+        <iframe src="{{pathFor 'nametags'}}"></iframe>
+    {{/if}}
+    <button type="button" name="printnametags" class="offset btn btn-default printnametags">Print</button>
+</template>
+
+<template name="nametags">
+    {{#each nametagstudents}}
+        <div class="panel panel-default nametag">
+            <div class="panel-body">
+                <div>
+                    {{lname}}, {{fname}}
+                </div>
+                <div>
+                    {{schoolname}}
+                </div>
+                <div>
+                    Schedule
+                </div>
+                {{#each keyvalue classnames}}
+                    <div>
+                        Time {{value}} Room #
+                    </div>
+                {{/each}}
+            </div>
+        </div>
+        {{#if isFinal}}
+            <script>
+                window.print();
+                Session.set('printing', false);
+            </script>
+        {{/if}}
+    {{/each}}
 </template>
 
 <template name="controls">
@@ -674,7 +742,7 @@
     <li>
         <div class="panel panel-default" style="max-width: 500px; min-width: 300px;">
             <div class="panel-heading">
-                <h4>{{classname}} {{livecount _id}}/{{classsizelimit}}</h4>
+                <h4>{{classname}}</h4>
             </div>
             <div class="panel-body">
                 {{classdescription}}

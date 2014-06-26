@@ -43,6 +43,11 @@ div {
     clear: both;
 }
 
+.offset {
+    clear: both;
+    margin: 20px;
+}
+
 .horizontal li {
     display: block;
     float: left;
@@ -54,4 +59,22 @@ div {
     display: inline-block;
     padding: 10px;
     position: relative;
+}
+
+.nametag {
+    padding: 5px;
+    margin: 20px;
+}
+
+.nametag div {
+    vertical-align: middle;
+}
+
+.nametag div div {
+    text-align: center;
+    padding:5px;
+    white-space: nowrap;
+    vertical-align: middle;
+    font-size: 20px;
+    font-weight: bold;
 }

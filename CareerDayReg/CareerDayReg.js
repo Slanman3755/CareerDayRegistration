@@ -48,7 +48,8 @@ if (Meteor.isClient) {
         Session.set('addnewclass', false);
         Session.set('addnewentry', false);
         Session.set('addnewcluster', false);
-        Session.set('addnewschool', false); 
+        Session.set('addnewschool', false);
+        Session.set('printing', false);
     });
 
     Router.onRun(function(){
@@ -68,7 +69,8 @@ if (Meteor.isClient) {
         Session.set('addnewentry', false);
         Session.set('addnewcluster', false);
         Session.set('addnewschool', false);
-    });   
+        Session.set('printing', false);
+    });
 
     Template.roster.students = function(){
 		return Students.find();
@@ -89,7 +91,7 @@ if (Meteor.isClient) {
     Template.roster.studentstime = function(){
         return Students.find({}, {sort: {time: -1}});
     }
-
+    
     Template.schedule.classes = function(){
         return Classes.find({}, {sort: {classname: 1}});     
     }
@@ -157,16 +159,32 @@ if (Meteor.isClient) {
     Template.controls.RegistrationControlButton = function() {
         return Session.get('registrationcontrolbutton');
     }
-   
+  
+    Template.nametags.helpers({
+        'nametagstudents': function(){
+            var students = Students.find({}, {sort: {lname: 1}}).fetch();
+            if(students.length>0) {
+                students[students.length-1].isFinal = true;
+                return students;
+            }
+        }
+    });
+
     Handlebars.registerHelper('equals', function(param1, param2){
         return param1==param2;
     });
 
-    Handlebars.registerHelper('loop', function(n){
-        var loop = [];
+    Handlebars.registerHelper('loop', loop);
+
+    Handlebars.registerHelper('inclusiveloop', function(n){
+        return loop(n+1);
+    });
+
+    function loop(n){
+        var loop=[];
         for(var i = 0; i<n; i++) loop.push(i);
         return loop;
-    });
+    }
 
     Handlebars.registerHelper('sortTypeFirstABC', function(){
         return Session.get('sortType')==1;
@@ -239,6 +257,10 @@ if (Meteor.isClient) {
         return Session.get('addnewschool');
     });
 
+    Handlebars.registerHelper('printing', function(){
+        return Session.get('printing');
+    });
+
     Handlebars.registerHelper('classesheader', function(){
         var students = Students.find().fetch();
         var maxlength = Session.get('maxlength');
@@ -270,12 +292,30 @@ if (Meteor.isClient) {
     });
 
     Handlebars.registerHelper('sum', function(param1, param2){
+        console.log(param1);
+        console.log(param2);
         return param1+param2;
     });
 
-    function liveCount(_id) {
+    Handlebars.registerHelper('classesAtTime', function(timeslot){
+        timeslot = String(++timeslot);
+        var classes = Classes.find({$or: [{classtimeslot: timeslot}, {classtimeslot: "0"}]});
+        console.log(timeslot);
+        console.log(classes.fetch());
+        return classes;
+    });
+
+    Handlebars.registerHelper('keyvalue', function(object){
+        return _.map(object, function(value, key){
+            return {key: key, value: value};
+        });
+    });
+
+    function liveCount(_id, timeslot) {
         var classname = Classes.findOne({_id: _id}).classname;
-        var count = Students.find({classnames: classname}).fetch().length;
+        var query = {};
+        query['classnames.'+timeslot] = classname;
+        var count = Students.find(query).fetch().length;
         if(count!=null)
             return count;
         else
@@ -569,6 +609,10 @@ if (Meteor.isClient) {
 
         'click .cancelnewschool': function(){
             Session.set('addnewschool', false);
+        },
+
+        'click .printnametags': function(){
+            Session.set('printing', true);
         }
     });
     
@@ -593,9 +637,9 @@ if (Meteor.isClient) {
                 var classnames = [];
                 var i = 0;
                 var overflowed = false;
-                _.each(selectedClasses, function(id){
+                _.each(selectedClasses, function(id, i){
                     var selectedClass = Classes.findOne({_id: id});
-                    if(liveCount(selectedClass._id)<selectedClass.classsizelimit) {
+                    if(liveCount(selectedClass._id, i)<selectedClass.classsizelimit) {
                         ids.push(id);
                     } else {
                         overflowed = true;
@@ -641,7 +685,7 @@ if (Meteor.isClient) {
 if (Meteor.isServer) {
     
     registrationEnabled = false;
-    numClasses = 3;
+    numClasses = 4;
 
     csv = Meteor.require('fast-csv');
     fs = Meteor.require('fs');

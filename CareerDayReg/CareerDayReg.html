@@ -56,35 +56,57 @@
 
 <template name="register">
     <div>{{> form}}</div>
-    <nav><a href="{{pathFor 'home'}}"><h4>Home</h4></a></nav>
+    <div><a href="{{pathFor 'home'}}"><h4>Home</h4></a></div>
 </template>
 
 <template name="form">
-  <h1>Welcome to Career Conference Registration</h1>
-  <table>
-	<tr>
-		<td><h4>First Name</h4></td>
-		<td><input type="text" value="" name="fname" id="fname" class="form-control fname"></td>
-	</tr>
-	<tr>
-		<td><h4>Last Name</h4></td>
-		<td><input type="text" value="" name="lname" id="lname" class="form-control lname"></td>
-	</tr>
-	<tr>
-		<td><h4>School Code</h4></td>
-		<td><input type="text" value="" name="schoolcode" id="schoolcode" class="form-control schoolcode"></td>
-	</tr>
-	<tr>
-        <td><h4>Choose {{numClasses}} classes</h4></td>
-	</tr>
-	{{#each classes}}
-		{{> classlist}}
-	{{/each}}
-	<tr>
-        <td><button type="submit" name="register" class="btn btn-default register">Register</button></td>
-		<td><h4 id="alert">{{RegisterMsg}}</h4></td>
-	</tr>
-  </table>
+    <h1>Welcome to Career Conference Registration</h1>
+    <table class="table">
+        <tr>
+            <td><h4>First Name</h4></td>
+		    <td><input type="text" style="max-width:150px;" value="" name="fname" id="fname" class="form-control fname"></td>
+	    </tr>
+	    <tr>
+		    <td><h4>Last Name</h4></td>
+		    <td><input type="text" style="max-width:150px;" value="" name="lname" id="lname" class="form-control lname"></td>
+	    </tr>
+	    <tr>
+		    <td><h4>School Code</h4></td>
+		    <td><input type="text" style="max-width:150px;" value="" name="schoolcode" id="schoolcode" class="form-control schoolcode"></td>
+	    </tr>
+    </table>
+    <h4>Choose {{numClasses}} classes</h4>
+    <div class="panel panel-default">
+        <div class="panel-body">
+            <ul class="horizontal">
+                {{#each loop numClasses}}
+                    {{> timeslotlist}}
+                {{/each}}
+                <li>
+                    <button type="submit" name="register" class="btn btn-default register">Register</button>
+                    <span id="alert">{{RegisterMsg}}</span>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <ul class="horizontal">
+        {{#each classes}}
+            {{> classlist}}
+	    {{/each}}
+    </ul>
+</template>
+
+<template name="timeslotlist">
+    <li>
+        <div class="input-group" style="max-width: 200px;">
+            <span class="input-group-addon">Timeslot {{sum . 1}}</span>
+            <select class="form-control classselect" name="classselect">
+                {{#each classes}}
+                    <option data-meteor-id="{{_id}}" value="{{classname}}">{{classname}}</option>
+                {{/each}}
+            </select>
+        </div>
+    </li>
 </template>
 
 <template name="roster">
@@ -290,7 +312,7 @@
     <div class="panel panel-default container">
         <div align="center" class="panel-heading"><h4>Groups</h4></div>
         <div align="center" class="panel-body">
-            <ul>
+            <ul class="horizontal">
                 {{#each clusters}}
                     {{> clusterentry}}
                 {{/each}}
@@ -377,7 +399,7 @@
                             <div align="center">
                                 Time Slot:
                                 <select name="classtimeslotentry" class="form-control classtimeslotentry">
-                                    {{#each loop numClasses}}
+                                    {{#each loop sum numClasses 1}}
                                         {{#unless equals ../classtimeslot .}}
                                             <option value="{{.}}">{{.}}</option>
                                         {{else}}
@@ -540,17 +562,17 @@
 <table class="table table-condensed table-striped">
     <thead>
         <tr>
-            <th>
-                Name
+            <th class="header-label-group">
+                <span class="header-label">Name</span>
             </th>
-            <th>
-                Code
+            <th class="header-label-group">
+                <span class="header-label">Code</span>
             </th>
-            <th>
-                Login
+            <th class="header-label-group">
+                <span class="header-label">Login</span>
             </th>
-            <th>
-                Password
+            <th class="header-label-group">
+                <span class="header-label">Password</span>
             </th>
         </tr>
     </thead>
@@ -649,8 +671,14 @@
 </template>
 
 <template name="classlist">
-	<tr>
-		<td><input type="checkbox" data-meteor-id="{{_id}}" name="classcheck" class="classcheck" id="classcheck">{{classname}}</td>
-        <td>{{livecount _id}}/{{classsizelimit}}</td>
-	</tr>
+    <li>
+        <div class="panel panel-default" style="max-width: 500px; min-width: 300px;">
+            <div class="panel-heading">
+                <h4>{{classname}} {{livecount _id}}/{{classsizelimit}}</h4>
+            </div>
+            <div class="panel-body">
+                {{classdescription}}
+            </div>
+        </div>
+    </li>
 </template>

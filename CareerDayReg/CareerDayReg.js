@@ -106,6 +106,10 @@ if (Meteor.isClient) {
         return Classes.find({}, {sort: {classname: 1}});
     }
 
+    Template.timeslotlist.classes = function(){
+        return Classes.find({}, {sort: {classname: 1}});
+    }
+
     Template.form.schools = function(){
         return Schools.find({}, {sort: {schoolname: 1}});
     }
@@ -160,7 +164,7 @@ if (Meteor.isClient) {
 
     Handlebars.registerHelper('loop', function(n){
         var loop = [];
-        for(var i = 0; i<=n; i++) loop.push(i);
+        for(var i = 0; i<n; i++) loop.push(i);
         return loop;
     });
 
@@ -263,6 +267,10 @@ if (Meteor.isClient) {
 
     Handlebars.registerHelper('getCurrentUsername', function(){
         return Meteor.user().emails[0].address;
+    });
+
+    Handlebars.registerHelper('sum', function(param1, param2){
+        return param1+param2;
     });
 
     function liveCount(_id) {
@@ -571,22 +579,24 @@ if (Meteor.isClient) {
             var fname = $('.fname').val();
       		var lname = $('.lname').val();
             var schoolcode = $('.schoolcode').val();
-            var checked = $('.classcheck:checked');
-            
+            var selectedClasses = $.makeArray($('.classselect').map(function(){
+                return $(this).find(":selected").data('meteor-id');
+            }));
+
             var school = Schools.findOne({schoolcode: schoolcode});
             
             if(fname!="" && lname!="") {
             if(school!=null) {
             Meteor.call('getNumClasses', function(error,numClasses){
-            if(checked.length==numClasses) {
+            if(selectedClasses.length==numClasses) {
                 var ids = [];
                 var classnames = [];
                 var i = 0;
                 var overflowed = false;
-                checked.each(function(){
-                    var checkedClass = Classes.findOne({_id: $(this).data("meteor-id")});
-                    if(liveCount(checkedClass._id)<checkedClass.classsizelimit) {
-                        ids.push($(this).data("meteor-id"));
+                _.each(selectedClasses, function(id){
+                    var selectedClass = Classes.findOne({_id: id});
+                    if(liveCount(selectedClass._id)<selectedClass.classsizelimit) {
+                        ids.push(id);
                     } else {
                         overflowed = true;
                         return false;

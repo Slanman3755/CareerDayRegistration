@@ -208,7 +208,7 @@
                     {{/each}}
                 </select>
             </td>
-            {{#each keyvalue classnames}}
+            {{#each indexArray classnames}}
                 <td>
                     <select name="classnameentry" class="form-control classnameentry">
                         {{#each classesAtTime key}}
@@ -269,7 +269,7 @@
                 <tr>
                     <td>
                         <div align="center">
-                            <h4>Settings</h4>
+                            <h4>Time Slots</h4>
                         </div>
                     </td>
                 </tr>
@@ -283,8 +283,17 @@
                 </tr>
                 <tr>
                     <td>
+                        <ul class="vertical">
+                            {{#each timeslots}}
+                                <li>Slot {{sum slot 1}}: {{time}}</li>
+                            {{/each}}
+                        </ul>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
                         <div align="center">
-                            <button type="button" name="editschedulesettings" class="btn btn-default editschedulesettings">Edit Settings</button>
+                            <button type="button" name="editschedulesettings" class="btn btn-default editschedulesettings">Edit</button>
                         </div>
                     </td>
                 </tr>
@@ -299,9 +308,18 @@
                 </tr>
                 <tr>
                     <td>
+                        <ul class="vertical">
+                            {{#each editabletimeslots}}
+                                <input type="text" value="{{value}}" name="timeslotentry" class="timeslotentry form-control">
+                            {{/each}}
+                        </ul>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
                         <div class="btn-group" align="center">
-                            <button type="button" name="saveschedulesettings" class="btn btn-default saveschedulesettings">Save Settings</button>
-                            <button type="button" name="cancelschedulesettings" class="btn btn-default cancelschedulesettings">Cancel Settings</button>
+                            <button type="button" name="saveschedulesettings" class="btn btn-default saveschedulesettings">Save</button>
+                            <button type="button" name="cancelschedulesettings" class="btn btn-default cancelschedulesettings">Cancel</button>
                         </div>
                     </td>
                 </tr> 
@@ -354,6 +372,11 @@
                         </th>
                         <th class="col-sm-2">
                             <div align="center">
+                                <h4>{{classroom}}</h4>
+                            </div>
+                        </th>
+                        <th class="col-sm-2">
+                            <div align="center">
                                 <h4>Time Slot: {{timeslot classtimeslot}}</h4>
                             </div>
                         </th>
@@ -381,12 +404,12 @@
                 </thead>
                 <tbody>
                     <tr>
-                        <td colspan="8">
+                        <td colspan="10">
                             {{{classdescription}}}
                         </td>
                     </tr>
                     <tr>
-                        <td colspan="8">
+                        <td colspan="10">
                             <div align="right">
                                 <div class="btn-group">
                                     <button type="button" name="editclass" class="editclass btn btn-default">Edit</button>
@@ -403,6 +426,12 @@
                             <div align="left">
                                 Class Name:
                                 <input type="text" value="{{classname}}" name="classnameentry" class="form-control classnameentry">
+                            </div>
+                        </th>
+                        <th class="col-sm-2">
+                            <div align="center">
+                                Room:
+                                <input type="text" value="{{classroom}}" name="classroomentry" class="form-control classroomentry">
                             </div>
                         </th>
                         <th class="col-sm-2">
@@ -473,6 +502,12 @@
                     <div align="left">
                         Class Name:
                         <input type="text" value="" name="classnameentry" class="form-control classnameentry">
+                    </div>
+                </th>
+                <th>
+                    <div align="left">
+                        Room:
+                        <input type="text" value="" name="classroomentry" class="form-control classroomentry">
                     </div>
                 </th>
                 <th class="col-sm-2">
@@ -717,17 +752,16 @@
                 <div>
                     Schedule
                 </div>
-                {{#each keyvalue classnames}}
+                {{#each indexArray classnames}}
                     <div>
-                        Time {{value}} Room #
+                        {{queryget 'Timeslots' 'slot' index 'time' true}} {{value}} {{queryget 'Classes' 'classname' value 'classroom' true}}
                     </div>
                 {{/each}}
             </div>
         </div>
         {{#if isFinal}}
             <script>
-                window.print();
-                Session.set('printing', false);
+               parent.postMessage('print', "*"); 
             </script>
         {{/if}}
     {{/each}}

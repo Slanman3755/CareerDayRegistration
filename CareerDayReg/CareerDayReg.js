@@ -112,6 +112,10 @@ if (Meteor.isClient) {
     Template.timeslotlist.classes = function(){
         return Classes.find({}, {sort: {classname: 1}});
     }
+    
+    Template.timeslotlist.clusters = function(){
+        return Clusters.find({}, {sort: {clustername: 1}});
+    }
 
     Template.form.schools = function(){
         return Schools.find({}, {sort: {schoolname: 1}});
@@ -134,6 +138,14 @@ if (Meteor.isClient) {
     }
 
     Template.schedule.clusters = function(){
+        return Clusters.find({}, {sort: {clustername: 1}});
+    }
+
+    Template.entry.clusters = function(){
+        return Clusters.find({}, {sort: {clustername: 1}});
+    }
+
+    Template.newentry.clusters = function(){
         return Clusters.find({}, {sort: {clustername: 1}});
     }
 
@@ -178,6 +190,13 @@ if (Meteor.isClient) {
         query[data] = val;
         if(doParent) return parent[collection].findOne(query)[returnData];
         else return window[collection].findOne(query)[returnData];
+    });
+
+    Handlebars.registerHelper('query', function(collection, data, val, doParent){
+        var query = {};
+        query[data] = val;
+        if(doParent) return parent[collection].find(query);
+        else return window[collection].find(query);
     });
 
     Handlebars.registerHelper('editabletimeslots', function(){
@@ -324,11 +343,10 @@ if (Meteor.isClient) {
         return param1+param2;
     });
 
-    Handlebars.registerHelper('classesAtTime', function(timeslot){
+    Handlebars.registerHelper('classSelector', function(clustername, timeslot){
         timeslot = String(++timeslot);
-        var classes = Classes.find({$or: [{classtimeslot: timeslot}, {classtimeslot: "0"}]});
-        console.log(timeslot);
-        console.log(classes.fetch());
+        var classes = Classes.find({classgroup: clustername, $or: [{classtimeslot: timeslot}, {classtimeslot: "0"}]});
+        console.log(classes);
         return classes;
     });
 
@@ -404,7 +422,7 @@ if (Meteor.isClient) {
                 setTimeout(function(){
                     registrationControlMsgUpdate()
                     $('.togglereg').prop('disabled', false);
-                }, 3000);
+                }, 1000);
             });
         },
 

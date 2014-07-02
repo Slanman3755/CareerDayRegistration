@@ -78,31 +78,43 @@
     <h4>Choose {{numClasses}} classes</h4>
     <div class="panel panel-default">
         <div class="panel-body">
-            <ul class="horizontal">
+            <ul class="list-group">
                 {{#each loop numClasses}}
                     {{> timeslotlist}}
                 {{/each}}
-                <li>
-                    <button type="submit" name="register" class="btn btn-default register">Register</button>
-                    <span id="alert">{{RegisterMsg}}</span>
+                <li class="list-group-item">
+                    <div align="center">
+                        <button type="submit" name="register" class="btn btn-default register">Register</button>
+                        <span id="alert">{{RegisterMsg}}</span>
+                    </div>
                 </li>
             </ul>
         </div>
     </div>
-    <ul class="horizontal">
-        {{#each classes}}
-            {{> classlist}}
+    <ul class="list-group">
+        {{#each clusters}}
+            <li class="list-group-item container">
+                <h1>{{clustername}}</h1>
+                <ul class="list-group">
+                    {{#each query 'Classes' 'classgroup' clustername false}}
+                        {{> classlist}}
+                    {{/each}}
+                </ul>
+            </li>
 	    {{/each}}
     </ul>
 </template>
 
 <template name="timeslotlist">
-    <li>
-        <div class="input-group" style="max-width: 200px;">
-            <span class="input-group-addon">Timeslot {{sum . 1}}</span>
+    <li class="list-group-item">
+        <div class="input-group">
+            <span class="input-group-addon">Time Slot {{sum . 1}}</span>
             <select class="form-control classselect" name="classselect">
-                {{#each classesAtTime .}}
-                    <option data-meteor-id="{{_id}}" value="{{classname}}">{{classname}}</option>
+                {{#each clusters}}
+                    <option disabled>{{clustername}}</option>
+                    {{#each classSelector clustername ..}}
+                        <option data-meteor-id="{{_id}}" value="{{classname}}">{{classname}}</option>
+                    {{/each}}
                 {{/each}}
             </select>
         </div>
@@ -211,12 +223,15 @@
             {{#each indexArray classnames}}
                 <td>
                     <select name="classnameentry" class="form-control classnameentry">
-                        {{#each classesAtTime key}}
-                            {{#unless equals ../value classname}}
-                                <option value="{{classname}}">{{classname}}</option>
-                            {{else}}
-                                <option value="{{classname}}" selected>{{classname}}</option>
-                            {{/unless}}
+                        {{#each clusters}}
+                            <option disabled>{{clustername}}</option>
+                            {{#each classSelector clustername ../index}}
+                                {{#unless equals ../../value classname}}
+                                    <option value="{{classname}}">{{classname}}</option>
+                                {{else}}
+                                    <option value="{{classname}}" selected>{{classname}}</option>
+                                {{/unless}}
+                            {{/each}}
                         {{/each}}
                     </select>
                 </td>
@@ -245,11 +260,14 @@
                 {{/each}}
             </select>
         </td>
-        {{#each key classesheader}}
+        {{#each classesheader}}
             <td>
                 <select name="classnameentry" class="form-control classnameentry">
-                    {{#each classesAtTime key}}
-                        <option value="{{classname}}">{{classname}}</option>
+                    {{#each clusters}}
+                        <option disabled>{{clustername}}</option>
+                        {{#each classSelector clustername ..}}
+                            <option value="{{classname}}">{{classname}}</option>
+                        {{/each}}
                     {{/each}}
                 </select>
             </td>
@@ -773,14 +791,12 @@
 </template>
 
 <template name="classlist">
-    <li>
-        <div class="panel panel-default" style="max-width: 500px; min-width: 300px;">
-            <div class="panel-heading">
-                <h4>{{classname}}</h4>
-            </div>
-            <div class="panel-body">
-                {{classdescription}}
-            </div>
+    <li class="panel panel-default list-group-item">
+        <div class="panel-heading">
+            <h4>{{classname}}</h4>
+        </div>
+        <div class="panel-body">
+            {{classdescription}}
         </div>
     </li>
 </template>

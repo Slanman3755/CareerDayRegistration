@@ -4,31 +4,6 @@ Schools = new Meteor.Collection("schools");
 Clusters = new Meteor.Collection("clusters");
 Timeslots = new Meteor.Collection("timeslots");
 
-var classnames = ["Math",
-                    "Science",
-                    "English",
-                    "French",
-                    "History",
-                    "Art"
-                    ];
-
-var schoolcodes = ["10001","10002","10003","10004","10005"];
-
-var schoolnames = [ "Richmond High School",
-                    "Centerville High School",
-                    "Northeastern High School",
-                    "Lincoln High School",
-                    "Seton Catholic High School"
-                    ];
-
-var clusternames = ["Math",
-                    "Language",
-                    "Art",
-                    "Music",
-                    "Science",
-                    "History"
-                    ];
-
 //Accounts.config({forbidClientAccountCreation: true});
 
 if (Meteor.isClient) {
@@ -45,12 +20,14 @@ if (Meteor.isClient) {
         Session.set('searchmsg',"");
         Session.set('sortType',0);
         Session.set('maxlength', 0);
-        Session.set('isEditingScheduleSettings', false);
+        Session.set('isEditingGeneralSettings', false);
         Session.set('addnewclass', false);
         Session.set('addnewentry', false);
         Session.set('addnewcluster', false);
         Session.set('addnewschool', false);
         Session.set('printing', false);
+        Session.set('editingNumClasses', false);
+        Session.set('selectedListClass', []);
     });
 
     Router.onRun(function(){
@@ -65,12 +42,14 @@ if (Meteor.isClient) {
         Session.set('searchmsg',"");
         Session.set('sortType',0);
         Session.set('maxlength',0);
-        Session.set('isEditingScheduleSettings', false);
+        Session.set('isEditingGeneralSettings', false);
         Session.set('addnewclass', false);
         Session.set('addnewentry', false);
         Session.set('addnewcluster', false);
         Session.set('addnewschool', false);
         Session.set('printing', false);
+        Session.set('editingNumClasses', false);
+        Session.set('selectedListClass', []);
     });
     
     Template.roster.students = function(){
@@ -93,7 +72,7 @@ if (Meteor.isClient) {
         return Students.find({}, {sort: {time: -1}});
     }
     
-    Template.schedule.classes = function(){
+    Template.classes.classes = function(){
         return Classes.find({}, {sort: {classname: 1}});     
     }
 
@@ -137,7 +116,7 @@ if (Meteor.isClient) {
         return Clusters.find({}, {sort: {clustername: 1}});
     }
 
-    Template.schedule.clusters = function(){
+    Template.classes.clusters = function(){
         return Clusters.find({}, {sort: {clustername: 1}});
     }
 
@@ -149,7 +128,7 @@ if (Meteor.isClient) {
         return Clusters.find({}, {sort: {clustername: 1}});
     }
 
-    Template.schedule.timeslots = function(){
+    Template.general.timeslots = function(){
         return Timeslots.find({}, {sort: {slot: 1}});
     }
 
@@ -203,14 +182,13 @@ if (Meteor.isClient) {
         var inputs = [];
         var timeslots = Timeslots.find().fetch();
         for(var i=0; i<Math.min(timeslots.length, Session.get('numClasses')); i++)
-            inputs.push({value: timeslots[i].time});
+            inputs.push({index: i, value: timeslots[i].time});
         for(var i=0; i<Session.get('numClasses')-timeslots.length; i++)
-            inputs.push({value: ""});
+            inputs.push({index: i+timeslots.length, value: ""});
         return inputs;
     });
 
-    window.addEventListener('print', function(e){
-        window.print();
+    document.addEventListener('printed', function(e){
         Session.set('printing', false);
     }, false);
 
@@ -222,17 +200,17 @@ if (Meteor.isClient) {
         return param1>param2;
     });
 
-    Handlebars.registerHelper('loop', loop);
-
-    Handlebars.registerHelper('inclusiveloop', function(n){
-        return loop(n+1);
-    });
-
     function loop(n){
         var loop=[];
         for(var i = 0; i<n; i++) loop.push(i);
         return loop;
     }
+
+    Handlebars.registerHelper('loop', loop);
+
+    Handlebars.registerHelper('inclusiveloop', function(n){
+        return loop(n+1);
+    });
 
     Handlebars.registerHelper('sortTypeFirstABC', function(){
         return Session.get('sortType')==1;
@@ -269,7 +247,7 @@ if (Meteor.isClient) {
         return (_.indexOf(Session.get('selectedSchools'), id)>=0);
     });
 
-    Template.schedule.numClasses = function() {
+    Template.general.numClasses = function() {
         return Session.get('numClasses');
     }
 
@@ -285,8 +263,16 @@ if (Meteor.isClient) {
         return Session.get('numClasses');
     }
 
-    Handlebars.registerHelper('editingScheduleSettings', function(){
-        return Session.get('isEditingScheduleSettings');
+    Handlebars.registerHelper('editingGeneralSettings', function(){
+        return Session.get('isEditingGeneralSettings');
+    });
+
+    Handlebars.registerHelper('editingNumClasses', function(){
+        return Session.get('editingNumClasses');
+    });
+
+    Handlebars.registerHelper('listClassSelected', function(id){
+        return (_.indexOf(Session.get('selectedListClass'), id)>=0);
     });
 
     Handlebars.registerHelper('addingNewClass', function(){
@@ -346,7 +332,6 @@ if (Meteor.isClient) {
     Handlebars.registerHelper('classSelector', function(clustername, timeslot){
         timeslot = String(++timeslot);
         var classes = Classes.find({classgroup: clustername, $or: [{classtimeslot: timeslot}, {classtimeslot: "0"}]});
-        console.log(classes);
         return classes;
     });
 
@@ -521,6 +506,21 @@ if (Meteor.isClient) {
         'click .cancelnewclass': function(){
             Session.set('addnewclass', false);
         },
+        
+        'click .listclass': function(){
+            var selected = Session.get('selectedListClass'),
+            self = this;
+
+            if(_.indexOf(selected, this._id)>=0) selected = _.without(selected, this._id);
+            else selected.push(this._id);
+
+            Session.set('selectedListClass', selected);
+
+            $('#'+this._id).prop("disabled", true);
+            setTimeout(function(){
+                $('#'+self._id).prop("disabled", false);
+            }, 500);
+        },
 
         'keyup .searchfield': function(){
             var searchtext = String($('.searchfield').val());
@@ -572,11 +572,11 @@ if (Meteor.isClient) {
             Session.set('addnewschool',true);
         },
 
-        'click .editschedulesettings': function(){
-            Session.set('isEditingScheduleSettings', true);
+        'click .editgeneralsettings': function(){
+            Session.set('isEditingGeneralSettings', true);
         },
 
-        'click .saveschedulesettings': function(){
+        'click .savegeneralsettings': function(){
             var timeslots = $.makeArray($('.timeslotentry').map(function(){
                 return $(this);
             }));
@@ -587,14 +587,26 @@ if (Meteor.isClient) {
                 }
             });
  
-            Session.set('isEditingScheduleSettings', false);
+            Session.set('isEditingGeneralSettings', false);
+        },
+
+        'click .cancelgeneralsettings': function(){
+            Session.set('isEditingGeneralSettings', false);
+        },
+
+        'click .editnumclasses': function(){
+            Session.set('editingNumClasses', true);
+        },
+
+        'click .savenumclasses': function(){
             Meteor.call('setNumClasses', Number($('.timeslotsentry').val()), function(error){
                 updateNumClasses();
+                Session.set('editingNumClasses', false);
             });
         },
 
-        'click .cancelschedulesettings': function(){
-            Session.set('isEditingScheduleSettings', false);
+        'click .cancelnumclasses': function(){
+            Session.set('editingNumClasses', false);
         },
 
         'click .editcluster': function(){
@@ -816,20 +828,5 @@ if (Meteor.isServer) {
 
   	Meteor.startup(function () {
         //Accounts.createUser({email:'admin',username:'admin',password:'admin'});
-        if (Classes.find().count() === 0)
-        for (var i = 0; i < classnames.length; i++)
-            Classes.insert({classname: classnames[i], classtimeslot: 0, classgroup: "Default", classdescription: "This is a class", classsizelimit: 30});
-
-        if (Schools.find().count() === 0)
-        for (var i = 0; i < schoolnames.length; i++)
-            Schools.insert({schoolname: schoolnames[i], schoolcode: schoolcodes[i], schoollogin: schoolnames[i], schoolpassword: schoolcodes[i]});
-
-        if (Clusters.find().count() === 0)
-        for (var i = 0; i < clusternames.length; i++)
-            Clusters.insert({clustername: clusternames[i]});
-
-        if (Timeslots.find().count() === 0)
-        for (var i = 0; i < numClasses; i++)
-            Timeslots.insert({slot: Number(i), time: ""});
     });
 }

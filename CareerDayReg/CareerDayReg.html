@@ -1,5 +1,6 @@
 <head>
-  <title>Career Conference Registration</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Career Conference Registration</title>
 </head>
 
 <template name="main">
@@ -27,7 +28,8 @@
     {{/if}}
         <ul class="nav nav-tabs">
             <li><a href="{{pathFor 'roster'}}"><h3>Roster</h3></a></li>
-            <li><a href="{{pathFor 'schedule'}}"><h3>Schedule</h3></a></li>
+            <li><a href="{{pathFor 'general'}}"><h3>General</h3></a></li>
+            <li><a href="{{pathFor 'classes'}}"><h3>Classes</h3></a></li>
             <li><a href="{{pathFor 'schools'}}"><h3>Schools</h3></a></li>
             <li><a href="{{pathFor 'print'}}"><h3>Print</h3></a></li>
             <li><a href="{{pathFor 'controls'}}"><h3>Controls</h3></a></li>
@@ -47,7 +49,7 @@
                 <td><input type="password"  value="" name="password" id="password" class="form-control password"></td>
             </tr>
             <tr>
-                <button type="submit" name="login" class="btn btn-default login">Login</button>
+               <button type="submit" name="login" class="btn btn-default login">Login</button>
             </tr>
         </table>
     {{/if}}
@@ -61,35 +63,39 @@
 
 <template name="form">
     <h1>Welcome to Career Conference Registration</h1>
-    <table class="table">
-        <tr>
-            <td><h4>First Name</h4></td>
-		    <td><input type="text" style="max-width:150px;" value="" name="fname" id="fname" class="form-control fname"></td>
-	    </tr>
-	    <tr>
-		    <td><h4>Last Name</h4></td>
-		    <td><input type="text" style="max-width:150px;" value="" name="lname" id="lname" class="form-control lname"></td>
-	    </tr>
-	    <tr>
-		    <td><h4>School Code</h4></td>
-		    <td><input type="text" style="max-width:150px;" value="" name="schoolcode" id="schoolcode" class="form-control schoolcode"></td>
-	    </tr>
-    </table>
-    <h4>Choose {{numClasses}} classes</h4>
-    <div class="panel panel-default">
-        <div class="panel-body">
-            <ul class="list-group">
-                {{#each loop numClasses}}
-                    {{> timeslotlist}}
-                {{/each}}
-                <li class="list-group-item">
-                    <div align="center">
-                        <button type="submit" name="register" class="btn btn-default register">Register</button>
-                        <span id="alert">{{RegisterMsg}}</span>
-                    </div>
-                </li>
-            </ul>
-        </div>
+    <ul class="vertical">
+        <li>
+            <span class="form-label">
+                <span style="float:left;min-width:150px;">First Name</span>
+		        <input type="text" style="max-width:150px;" value="" name="fname" id="fname" class="fname">
+            </span>
+	    </li>
+	    <li>
+		    <span class="form-label">
+                <span style="float:left;min-width:150px;">Last Name</span>
+		        <input type="text" style="max-width:150px;" value="" name="lname" id="lname" class="lname">
+            </span>
+	    </li>
+	    <li>
+            <span class="form-label">
+                <span style="float:left;min-width:150px;">School Code</span>
+		        <input type="text" style="max-width:150px;" value="" name="schoolcode" id="schoolcode" class="schoolcode">
+            </span>
+	    </li>
+    </ul>
+    <div class="container"><h4>Choose {{numClasses}} classes</h4></div>
+    <div class="container">
+        <ul class="list-group">
+            {{#each loop numClasses}}
+                {{> timeslotlist}}
+            {{/each}}
+            <li class="list-group-item">
+                <div align="center">
+                    <button type="submit" name="register" class="btn btn-default register">Register</button>
+                    <span id="alert">{{RegisterMsg}}</span>
+                </div>
+            </li>
+        </ul>
     </div>
     <ul class="list-group">
         {{#each clusters}}
@@ -147,7 +153,7 @@
             </div></th>
 			{{#each classesheader}}
                 <th class="header-label-group">
-                    <span class="header-label">Class {{.}}</span>
+                    <span>Class {{.}}</span>
                 </th>
 			{{/each}}
             <th><div class="input-group">
@@ -202,7 +208,7 @@
                 <td></td>
             {{/each}}
             <td class="col-lg-2">{{time}}</td>
-            <td class="col-lg-2"><div class="btn-group">
+            <td class="col-lg-2"><div class="btn-group" style="min-width:150px;">
                 <button type="button" name="editentry" class="btn btn-default editentry">Edit</button>
                 <button type="button" name="deleteentry" class="btn btn-default deleteentry">Delete</button>
             </div></td>
@@ -240,7 +246,7 @@
                 <td></td>
             {{/each}}
             <td class="col-lg-2"><input type="text" value="{{time}}" name="timeentry" class="form-control timeentry"/></td>
-            <td class="col-lg-2"><div class="btn-group">
+            <td class="col-lg-2"><div class="btn-group" style="min-width:150px;">
                 <button type="button" name="saveentry" class="btn btn-default saveentry">Save</button>
                 <button type="button" name="cancelentry" class="btn btn-default cancelentry">Cancel</button>
             </div></td>
@@ -280,71 +286,71 @@
     </tr>
 </template>
 
-<template name="schedule">
-    <div class="panel panel-default container">
-        <div align="center" class="panel-heading">
-            <table class="table">
-                <tr>
-                    <td>
-                        <div align="center">
-                            <h4>Time Slots</h4>
-                        </div>
-                    </td>
-                </tr>
-                {{#unless editingScheduleSettings}}
-                <tr>
-                    <td>
-                        <div align="center">
-                            Number Of Time Slots/Classes To Register For: {{numClasses}}
-                        </div>
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        <ul class="vertical">
-                            {{#each timeslots}}
-                                <li>Slot {{sum slot 1}}: {{time}}</li>
-                            {{/each}}
-                        </ul>
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        <div align="center">
-                            <button type="button" name="editschedulesettings" class="btn btn-default editschedulesettings">Edit</button>
-                        </div>
-                    </td>
-                </tr>
-                {{else}}
-                <tr>
-                    <td>
-                        <div align="center">
-                            Number Of Time Slots/Classes To Register For:
-                            <input type="text" value="{{numClasses}}" name="timeslotsentry" class="timeslotsentry form-control">
-                        </div>
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        <ul class="vertical">
-                            {{#each editabletimeslots}}
+<template name="general">
+    <ul class="list-group container">
+        <li class="list-group-item" style="background-color:#f5f5f5">
+            <div align="center">
+                <h4>Time Slots</h4>
+            </div>
+        </li>
+        {{#unless editingNumClasses}}
+            <li class="list-group-item">
+                <div align="center">
+                    Number Of Time Slots/Classes To Register For: {{numClasses}}
+                    <button type="button" name="editnumclasses" class="btn btn-default editnumclasses">Edit</button>
+                </div>
+            </li>
+        {{else}}
+            <li class="list-group-item">
+                <div align="center">
+                    Number Of Time Slots/Classes To Register For:
+                    <input type="text" value="{{numClasses}}" name="timeslotsentry" class="timeslotsentry form-control">
+                    <div class="btn-group" align="center">
+                        <button type="button" name="savenumclasses" class="btn btn-default savenumclasses">Save</button>
+                        <button type="button" name="cancelnumclasses" class="btn btn-default cancelnumclasses">Cancel</button>
+                    </div>
+                </div>
+            </li>
+        {{/unless}}
+        {{#unless editingGeneralSettings}}
+            <li class="list-group-item">
+                <div align="center">
+                    <ul class="vertical">
+                        {{#each timeslots}}
+                            <li>Slot {{sum slot 1}} Description/Time: {{time}}</li>
+                        {{/each}}
+                    </ul>
+                </div>
+            </li>
+            <li class="list-group-item">
+                <div align="center">
+                    <button type="button" name="editgeneralsettings" class="btn btn-default editgeneralsettings">Edit</button>
+                </div>
+            </li>
+        {{else}}
+            <li class="list-group-item">
+                <ul class="vertical">
+                    <div align="center">
+                        {{#each editabletimeslots}}
+                            <li>
+                                Slot {{sum index 1}} Description/Time:
                                 <input type="text" value="{{value}}" name="timeslotentry" class="timeslotentry form-control">
-                            {{/each}}
-                        </ul>
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        <div class="btn-group" align="center">
-                            <button type="button" name="saveschedulesettings" class="btn btn-default saveschedulesettings">Save</button>
-                            <button type="button" name="cancelschedulesettings" class="btn btn-default cancelschedulesettings">Cancel</button>
-                        </div>
-                    </td>
-                </tr> 
-                {{/unless}}
-            </table>
-        </div>
-    </div>
+                            </li>
+                        {{/each}}
+                    </div>
+                </ul>
+            </li>
+            <li class="list-group-item">
+                <div class="btn-group" align="center">
+                    <button type="button" name="savegeneralsettings" class="btn btn-default savegeneralsettings">Save</button>
+                    <button type="button" name="cancelgeneralsettings" class="btn btn-default cancelgeneralsettings">Cancel</button>
+                </div>
+            </li>
+        {{/unless}}
+    </ul>
+</template>
+
+<template name="classes">
     <div class="panel panel-default container">
         <div align="center" class="panel-heading"><h4>Groups</h4></div>
         <div align="center" class="panel-body">
@@ -383,38 +389,46 @@
             {{#unless classSelected _id}} 
                 <thead>
                     <tr>
-                        <th class="col-sm-2">
+                        <th class="col-sm-1">
                             <div align="left">
-                                <h4>{{classname}}</h4>
+                                <span><h4>{{classname}}</h4></span>
                             </div>
                         </th>
                         <th class="col-sm-2">
                             <div align="center">
-                                <h4>{{classroom}}</h4>
+                                <div class="btn-group">
+                                    <button type="button" name="editclass" class="editclass btn btn-default">Edit</button>
+                                    <button type="button" name="deleteclass" class="deleteclass btn btn-default">Delete</button>
+                                </div>
                             </div>
                         </th>
                         <th class="col-sm-2">
                             <div align="center">
-                                <h4>Time Slot: {{timeslot classtimeslot}}</h4>
+                                <span><h4>{{classroom}}</h4></span>
+                            </div>
+                        </th>
+                        <th class="col-sm-2">
+                            <div align="center">
+                                <span><h4>Time Slot: {{timeslot classtimeslot}}</h4></span>
                             </div>
                         </th>
                         <th class="col-sm-1">
                             <div align="center">
-                                <h4>{{classgroup}}</h4>
+                                <span><h4>{{classgroup}}</h4></span>
                             </div>
                         </th>
                         {{#if equals classtimeslot "0"}}
                             {{#each loop numClasses}}
                                 <th class="col-sm-1">
                                     <div align="right">
-                                        <h4>{{livecount ../_id .}}/{{../classsizelimit}}</h4>
+                                        <span><h4>{{livecount ../_id .}}/{{../classsizelimit}}</h4></span>
                                     </div>
                                 </th>
                             {{/each}}
                         {{else}}
                             <th class="col-sm-1">
                                 <div align="right">
-                                    <h4>{{livecount _id classtimeslot}}/{{classsizelimit}}</h4>
+                                    <span><h4>{{livecount _id classtimeslot}}/{{classsizelimit}}</h4></span>
                                 </div>
                             </th>
                         {{/if}}
@@ -422,17 +436,14 @@
                 </thead>
                 <tbody>
                     <tr>
-                        <td colspan="10">
+                        <td colspan="13">
                             {{{classdescription}}}
                         </td>
                     </tr>
                     <tr>
-                        <td colspan="10">
-                            <div align="right">
-                                <div class="btn-group">
-                                    <button type="button" name="editclass" class="editclass btn btn-default">Edit</button>
-                                    <button type="button" name="deleteclass" class="deleteclass btn btn-default">Delete</button>
-                                </div>
+                        <td colspan="13">
+                            <div align="left">
+                                <button id="{{_id}}" type="button" name="listclass" class="listclass btn btn-default">List</button>
                             </div>
                         </td>
                     </tr>
@@ -442,61 +453,71 @@
                     <tr>
                         <th>
                             <div align="left">
-                                Class Name:
-                                <input type="text" value="{{classname}}" name="classnameentry" class="form-control classnameentry">
+                                <span>
+                                    Class Name:
+                                    <input type="text" value="{{classname}}" name="classnameentry" class="form-control classnameentry">
+                                </span>
                             </div>
                         </th>
                         <th class="col-sm-2">
                             <div align="center">
-                                Room:
-                                <input type="text" value="{{classroom}}" name="classroomentry" class="form-control classroomentry">
+                                <span>
+                                    Room:
+                                    <input type="text" value="{{classroom}}" name="classroomentry" class="form-control classroomentry">
+                                </span>
                             </div>
                         </th>
                         <th class="col-sm-2">
                             <div align="center">
-                                Time Slot:
-                                <select name="classtimeslotentry" class="form-control classtimeslotentry">
-                                    {{#each inclusiveloop numClasses}}
-                                        {{#unless equals ../classtimeslot .}}
-                                            <option value="{{.}}">{{timeslot .}}</option>
-                                        {{else}}
-                                            <option value="{{.}}" selected>{{timeslot .}}</option>
-                                        {{/unless}}
-                                    {{/each}}
-                                </select>
+                                <span>
+                                    Time Slot:
+                                    <select name="classtimeslotentry" class="form-control classtimeslotentry">
+                                        {{#each inclusiveloop numClasses}}
+                                            {{#unless equals ../classtimeslot .}}
+                                                <option value="{{.}}">{{timeslot .}}</option>
+                                            {{else}}
+                                                <option value="{{.}}" selected>{{timeslot .}}</option>
+                                            {{/unless}}
+                                        {{/each}}
+                                    </select>
+                                </span>
                             </div>
                         </th>
                         <th class="col-sm-2">
                             <div align="center">
-                                Group:
-                                <select name="classgroupentry" class="form-control classgroupentry">
-                                    {{#each clusters}}
-                                        {{#unless equals ../classgroup clustername}}
-                                            <option value="{{clustername}}">{{clustername}}</option>
-                                        {{else}}
-                                            <option value="{{clustername}}" selected>{{clustername}}</option>
-                                        {{/unless}}
-                                    {{/each}}
-                                </select>
+                                <span>
+                                    Group:
+                                    <select name="classgroupentry" class="form-control classgroupentry">
+                                        {{#each clusters}}
+                                            {{#unless equals ../classgroup clustername}}
+                                                <option value="{{clustername}}">{{clustername}}</option>
+                                            {{else}}
+                                                <option value="{{clustername}}" selected>{{clustername}}</option>
+                                            {{/unless}}
+                                        {{/each}}
+                                    </select>
+                                </span>
                             </div>
                         </th>
                         <th class="col-sm-1">
                             <div align="right">
-                                Size Limit:
-                                <input type="text" value="{{classsizelimit}}" name="classsizelimitentry" class="form-control classsizelimitentry">
+                                <span>
+                                    Size Limit:
+                                    <input type="text" value="{{classsizelimit}}" name="classsizelimitentry" class="form-control classsizelimitentry">
+                                </span>
                             </div>
                         </th>
                     </tr>
                 </thead>
                 <tbody>
                     <tr>
-                        <td colspan="4">
+                        <td colspan="8">
                             Description:
                             <textarea rows=4 style="resize:vertical;" name="classdescriptionentry" class="form-control classdescriptionentry">{{classdescription}}</textarea>
                         </td>
                     </tr>
                     <tr>
-                        <td colspan="4">
+                        <td colspan="8">
                             <div align="right">
                                 <div class="btn-group">
                                     <button type="button" name="saveclass" class="saveclass btn btn-default">Save</button>
@@ -508,7 +529,38 @@
                 </tbody> 
             {{/unless}}
         </table>
-    </div>
+        {{#if listClassSelected _id}}
+            <table class="table table-condensed table-striped">
+                <thead>
+                    <tr>
+                        <th class="header-label-group">
+                            <span>First Name</span>
+                        </th>
+                        <th class="header-label-group">
+                            <span>Last Name</span>
+                        </th>
+                        <th class="header-label-group">
+                            <span>School</span>
+                        </th>
+                        {{#each classesheader}}
+                            <th class="header-label-group">
+                                <span>Class {{.}}</span>
+                            </th>
+                        {{/each}}
+                        <th class="header-label-group">
+                            <span>Time</span>
+                        </th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {{#each query 'Students' 'classnames' classname}}
+                        {{> entry}}    
+                    {{/each}}
+                </tbody>
+            </table>
+        {{/if}}
+</div>
 </template>
 
 <template name="newclassentry">
@@ -626,16 +678,16 @@
     <thead>
         <tr>
             <th class="header-label-group">
-                <span class="header-label">Name</span>
+                <span>Name</span>
             </th>
             <th class="header-label-group">
-                <span class="header-label">Code</span>
+                <span>Code</span>
             </th>
             <th class="header-label-group">
-                <span class="header-label">Login</span>
+                <span>Login</span>
             </th>
             <th class="header-label-group">
-                <span class="header-label">Password</span>
+                <span>Password</span>
             </th>
         </tr>
     </thead>
@@ -735,7 +787,7 @@
                 School
             </div>
             <div>
-                Schedule
+                General
             </div>
             <div>
                 9:10-9:30   Session 1 Room #
@@ -752,7 +804,7 @@
         </div>
     </div>
     {{#if printing}}
-        <iframe src="{{pathFor 'nametags'}}"></iframe>
+        <iframe src="{{pathFor 'nametags'}}" hidden></iframe>
     {{/if}}
     <button type="button" name="printnametags" class="offset btn btn-default printnametags">Print</button>
 </template>
@@ -768,7 +820,7 @@
                     {{schoolname}}
                 </div>
                 <div>
-                    Schedule
+                    General
                 </div>
                 {{#each indexArray classnames}}
                     <div>
@@ -779,7 +831,8 @@
         </div>
         {{#if isFinal}}
             <script>
-               parent.postMessage('print', "*"); 
+                window.print();
+                parent.window.$.event.trigger({ type: 'printed' });
             </script>
         {{/if}}
     {{/each}}

@@ -8,8 +8,16 @@ a {
     color:black;
 }   
 
+span {
+    white-space: nowrap;
+}
+
 #alert {
     color: red;
+}
+
+.form-label {
+    font-size: 18px;
 }
 
 .header-label-group {
@@ -17,7 +25,7 @@ a {
     border-collapse: separate;
 }
 
-.header-label {
+.header-label-group span {
     border-spacing: 0;
     padding: 6px 12px;
     line-height: 1.42857143; 
@@ -56,13 +64,14 @@ div {
 }
 
 .vertical {
-    display: table-row;
+   padding-left: 0; 
 }
 
 .vertical li {
-    display: inline-block;
+    display: block;
     padding: 10px;
     position: relative;
+    clear: both;
 }
 
 .nametag {
@@ -82,3 +91,4 @@ div {
     font-size: 20px;
     font-weight: bold;
 }
+

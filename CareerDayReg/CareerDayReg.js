@@ -188,8 +188,8 @@ if (Meteor.isClient) {
         return inputs;
     });
 
-    document.addEventListener('printed', function(e){
-        Session.set('printing', false);
+    window.addEventListener('message', function(e){
+        if(e.data=='printed') Session.set('printing', false);
     }, false);
 
     Handlebars.registerHelper('equals', function(param1, param2){

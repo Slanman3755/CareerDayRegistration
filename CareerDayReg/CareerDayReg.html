@@ -806,7 +806,7 @@
         </div>
     </div>
     {{#if printing}}
-        <iframe src="{{pathFor 'nametags'}}" hidden></iframe>
+        <iframe src="{{pathFor 'nametags'}}"></iframe>
     {{/if}}
     <button type="button" name="printnametags" class="offset btn btn-default printnametags"><span class="glyphicon glyphicon-print"></span></button>
 </template>
@@ -834,7 +834,7 @@
         {{#if isFinal}}
             <script>
                 window.print();
-                parent.window.$.event.trigger({ type: 'printed' });
+                parent.postMessage("printed", "*");
             </script>
         {{/if}}
     {{/each}}

@@ -22,7 +22,7 @@
     <div><h2>Administrative Control Panel</h2></div>
     {{#if currentUser}}
         <div>
-            Logged in as {{getCurrentUsername}}
+            <span class="glyphicon glyphicon-user"></span>Logged in as {{getCurrentUsername}}
             <button type="submit" name="signout" class="btn btn-default signout">Signout</button>
         </div>
     {{/if}}
@@ -62,27 +62,29 @@
 </template>
 
 <template name="form">
-    <h1>Welcome to Career Conference Registration</h1>
-    <ul class="vertical">
-        <li>
-            <span class="form-label">
-                <span style="float:left;min-width:150px;">First Name</span>
-		        <input type="text" style="max-width:150px;" value="" name="fname" id="fname" class="fname">
-            </span>
-	    </li>
-	    <li>
-		    <span class="form-label">
-                <span style="float:left;min-width:150px;">Last Name</span>
-		        <input type="text" style="max-width:150px;" value="" name="lname" id="lname" class="lname">
-            </span>
-	    </li>
-	    <li>
-            <span class="form-label">
-                <span style="float:left;min-width:150px;">School Code</span>
-		        <input type="text" style="max-width:150px;" value="" name="schoolcode" id="schoolcode" class="schoolcode">
-            </span>
-	    </li>
-    </ul>
+    <div class="container">
+        <h1>Welcome to Career Conference Registration</h1>
+        <ul class="vertical">
+            <li>
+                <span class="form-label">
+                    <span style="float:left;min-width:150px;">First Name</span>
+                    <input type="text" style="max-width:150px;" value="" name="fname" id="fname" class="fname">
+                </span>
+            </li>
+            <li>
+                <span class="form-label">
+                    <span style="float:left;min-width:150px;">Last Name</span>
+                    <input type="text" style="max-width:150px;" value="" name="lname" id="lname" class="lname">
+                </span>
+            </li>
+            <li>
+                <span class="form-label">
+                    <span style="float:left;min-width:150px;">School Code</span>
+                    <input type="text" style="max-width:150px;" value="" name="schoolcode" id="schoolcode" class="schoolcode">
+                </span>
+            </li>
+        </ul>
+    </div>
     <div class="container"><h4>Choose {{numClasses}} classes</h4></div>
     <div class="container">
         <ul class="list-group">
@@ -187,7 +189,7 @@
         
         <tr>
             <td colspan="10">
-                <button type="button" name="addnewentry" class="btn btn-default addnewentry">Add New Student</button>
+                <button type="button" name="addnewentry" class="btn btn-default addnewentry"><span class="glyphicon glyphicon-plus-sign"></span>Add New Student</button>
             </td>
         </tr>
 	</tbody>
@@ -209,8 +211,8 @@
             {{/each}}
             <td class="col-lg-2">{{time}}</td>
             <td class="col-lg-2"><div class="btn-group" style="min-width:150px;">
-                <button type="button" name="editentry" class="btn btn-default editentry">Edit</button>
-                <button type="button" name="deleteentry" class="btn btn-default deleteentry">Delete</button>
+                <button type="button" name="editentry" class="btn btn-default editentry"><span class="glyphicon glyphicon-pencil"></span></button>
+                <button type="button" name="deleteentry" class="btn btn-default deleteentry"><span class="glyphicon glyphicon-trash"></span></button>
             </div></td>
         {{else}}
             <td><input type="text" value="{{fname}}" name="fnameentry" class="form-control fnameentry"/></td>
@@ -247,8 +249,8 @@
             {{/each}}
             <td class="col-lg-2"><input type="text" value="{{time}}" name="timeentry" class="form-control timeentry"/></td>
             <td class="col-lg-2"><div class="btn-group" style="min-width:150px;">
-                <button type="button" name="saveentry" class="btn btn-default saveentry">Save</button>
-                <button type="button" name="cancelentry" class="btn btn-default cancelentry">Cancel</button>
+                <button type="button" name="saveentry" class="btn btn-default saveentry"><span class="glyphicon glyphicon-ok"></span></button>
+                <button type="button" name="cancelentry" class="btn btn-default cancelentry"><span class="glyphicon glyphicon-remove"></span></button>
             </div></td>
         {{/unless}}
     </tr>
@@ -280,8 +282,8 @@
         {{/each}}
         <td class="col-lg-2"><input type="text" name="timeentry" class="form-control timeentry"/></td>
         <td class="col-lg-2"><div class="btn-group">
-            <button type="button" name="savenewentry" class="btn btn-default savenewentry">Save</button>
-            <button type="button" name="cancelnewentry" class="btn btn-default cancelnewentry">Cancel</button>
+            <button type="button" name="savenewentry" class="btn btn-default savenewentry"><span class="glyphicon glyphicon-ok"></span></button>
+            <button type="button" name="cancelnewentry" class="btn btn-default cancelnewentry"><span class="glyphicon glyphicon-remove"></span></button>
         </div></td>
     </tr>
 </template>
@@ -297,7 +299,7 @@
             <li class="list-group-item">
                 <div align="center">
                     Number Of Time Slots/Classes To Register For: {{numClasses}}
-                    <button type="button" name="editnumclasses" class="btn btn-default editnumclasses">Edit</button>
+                    <button type="button" name="editnumclasses" class="btn btn-default editnumclasses"><span class="glyphicon glyphicon-pencil"></span></button>
                 </div>
             </li>
         {{else}}
@@ -306,8 +308,8 @@
                     Number Of Time Slots/Classes To Register For:
                     <input type="text" value="{{numClasses}}" name="timeslotsentry" class="timeslotsentry form-control">
                     <div class="btn-group" align="center">
-                        <button type="button" name="savenumclasses" class="btn btn-default savenumclasses">Save</button>
-                        <button type="button" name="cancelnumclasses" class="btn btn-default cancelnumclasses">Cancel</button>
+                        <button type="button" name="savenumclasses" class="btn btn-default savenumclasses"><span class="glyphicon glyphicon-ok"></span></button>
+                        <button type="button" name="cancelnumclasses" class="btn btn-default cancelnumclasses"><span class="glyphicon glyphicon-remove"></span></button>
                     </div>
                 </div>
             </li>
@@ -324,7 +326,7 @@
             </li>
             <li class="list-group-item">
                 <div align="center">
-                    <button type="button" name="editgeneralsettings" class="btn btn-default editgeneralsettings">Edit</button>
+                    <button type="button" name="editgeneralsettings" class="btn btn-default editgeneralsettings"><span class="glyphicon glyphicon-pencil"></span></button>
                 </div>
             </li>
         {{else}}
@@ -342,8 +344,8 @@
             </li>
             <li class="list-group-item">
                 <div class="btn-group" align="center">
-                    <button type="button" name="savegeneralsettings" class="btn btn-default savegeneralsettings">Save</button>
-                    <button type="button" name="cancelgeneralsettings" class="btn btn-default cancelgeneralsettings">Cancel</button>
+                    <button type="button" name="savegeneralsettings" class="btn btn-default savegeneralsettings"><span class="glyphicon glyphicon-ok"></span></button>
+                    <button type="button" name="cancelgeneralsettings" class="btn btn-default cancelgeneralsettings"><span class="glyphicon glyphicon-remove"></span></button>
                 </div>
             </li>
         {{/unless}}
@@ -365,7 +367,7 @@
             </ul>
         </div>
         <div align="center" class="">
-            <button type="button" name="addnewcluster" class="btn btn-default addnewcluster">Add New</button>
+            <button type="button" name="addnewcluster" class="btn btn-default addnewcluster"><span class="glyphicon glyphicon-plus-sign"></span>Add New</button>
         </div>
     </div>
     {{#each classes}}
@@ -378,7 +380,7 @@
 
     <div class="panel panel-default container">
         <div align="center" class="panel-heading">
-            <button type="button" name="addnewclass" class="btn btn-default addnewclass">Add New Class</button>
+            <button type="button" name="addnewclass" class="btn btn-default addnewclass"><span class="glyphicon glyphicon-plus-sign"></span>Add New Class</button>
         </div>
     </div>
 </template>
@@ -397,8 +399,8 @@
                         <th class="col-sm-2">
                             <div align="center">
                                 <div class="btn-group">
-                                    <button type="button" name="editclass" class="editclass btn btn-default">Edit</button>
-                                    <button type="button" name="deleteclass" class="deleteclass btn btn-default">Delete</button>
+                                    <button type="button" name="editclass" class="editclass btn btn-default"><span class="glyphicon glyphicon-pencil"></span></button>
+                                    <button type="button" name="deleteclass" class="deleteclass btn btn-default"><span class="glyphicon glyphicon-trash"></span></button>
                                 </div>
                             </div>
                         </th>
@@ -520,8 +522,8 @@
                         <td colspan="8">
                             <div align="right">
                                 <div class="btn-group">
-                                    <button type="button" name="saveclass" class="saveclass btn btn-default">Save</button>
-                                    <button type="button" name="cancelclass" class="cancelclass btn btn-default">Cancel</button>
+                                    <button type="button" name="saveclass" class="saveclass btn btn-default"><span class="glyphicon glyphicon-ok"></span></button>
+                                    <button type="button" name="cancelclass" class="cancelclass btn btn-default"><span class="glyphicon glyphicon-remove"></span></button>
                                 </div>
                             </div>
                         </td>
@@ -619,8 +621,8 @@
             <td colspan="4">
                 <div align="right">
                     <div class="btn-group">
-                        <button type="button" name="savenewclass" class="savenewclass btn btn-default">Save</button>
-                        <button type="button" name="cancelnewclass" class="cancelnewclass btn btn-default">Cancel</button>
+                        <button type="button" name="savenewclass" class="savenewclass btn btn-default"><span class="glyphicon glyphicon-ok"></span></button>
+                        <button type="button" name="cancelnewclass" class="cancelnewclass btn btn-default"><span class="glyphicon glyphicon-remove"></span></button>
                     </div>
                 </div>
             </td>
@@ -639,8 +641,8 @@
     </div>
     <div align="center">
         <div class="btn-group">
-            <button class="btn btn-default editcluster" name="editcluster">Edit</button>
-            <button class="btn btn-default deletecluster" name="deletecluster">Delete</button>
+            <button class="btn btn-default editcluster" name="editcluster"><span class="glyphicon glyphicon-pencil"></span></button>
+            <button class="btn btn-default deletecluster" name="deletecluster"><span class="glyphicon glyphicon-trash"></span></button>
         </div>
     </div>
     </li>
@@ -651,8 +653,8 @@
     </div>
     <div align="center">
         <div class="btn-group">
-            <button class="btn btn-default savecluster" name="savecluster">Save</button>
-            <button class="btn btn-default cancelcluster" name="cancelcluster">Cancel</button>
+            <button class="btn btn-default savecluster" name="savecluster"><span class="glyphicon glyphicon-ok"></span></button>
+            <button class="btn btn-default cancelcluster" name="cancelcluster"><span class="glyphicon glyphicon-remove"></span></button>
         </div>
     </div>
     </li>
@@ -666,8 +668,8 @@
     </div>
     <div align="center">
         <div class="btn-group">
-            <button class="btn btn-default savenewcluster" name="savenewcluster">Save</button>
-            <button class="btn btn-default cancelnewcluster" name="cancelnewcluster">Cancel</button>
+            <button class="btn btn-default savenewcluster" name="savenewcluster"><span class="glyphicon glyphicon-ok"></span></button>
+            <button class="btn btn-default cancelnewcluster" name="cancelnewcluster"><span class="glyphicon glyphicon-remove"></span></button>
         </div>
     </div>
     </li> 
@@ -702,7 +704,7 @@
 
         <tr>
             <td colspan="10">
-                <button type="button" name="addnewschool" class="btn btn-default addnewschool">Add New School</button>
+                <button type="button" name="addnewschool" class="btn btn-default addnewschool"><span class="glyphicon glyphicon-plus-sign"></span>Add New School</button>
             </td>
         </tr>
     </tbody>
@@ -726,8 +728,8 @@
         </td>
         <td>
             <div class="btn-group">
-                <button type="button" name="editschool" class="btn btn-default editschool">Edit</button>
-                <button type="button" name="deleteschool" class="btn btn-default deleteschool">Delete</button> 
+                <button type="button" name="editschool" class="btn btn-default editschool"><span class="glyphicon glyphicon-pencil"></span></button>
+                <button type="button" name="deleteschool" class="btn btn-default deleteschool"><span class="glyphicon glyphicon-trash"></span></button> 
             </div>
         </td>
         {{else}}
@@ -745,8 +747,8 @@
         </td>
         <td>
             <div class="btn-group">
-                <button type="button" name="saveschool" class="btn btn-default saveschool">Save</button>
-                <button type="button" name="cancelschool" class="btn btn-default cancelschool">Cancel</button> 
+                <button type="button" name="saveschool" class="btn btn-default saveschool"><span class="glyphicon glyphicon-ok"></span></button>
+                <button type="button" name="cancelschool" class="btn btn-default cancelschool"><span class="glyphicon glyphicon-remove"></span></button> 
             </div>
         </td> 
         {{/unless}}
@@ -769,8 +771,8 @@
         </td>
         <td>
             <div class="btn-group">
-            <button type="button" name="savenewschool" class="btn btn-default savenewschool">Save</button>
-            <button type="button" name="cancelnewschool" class="btn btn-default cancelnewschool">Cancel</button> 
+            <button type="button" name="savenewschool" class="btn btn-default savenewschool"><span class="glyphicon glyphicon-ok"></span></button>
+            <button type="button" name="cancelnewschool" class="btn btn-default cancelnewschool"><span class="glyphicon glyphicon-remove"></span></button> 
             </div>
         </td>
     </tr>
@@ -806,7 +808,7 @@
     {{#if printing}}
         <iframe src="{{pathFor 'nametags'}}" hidden></iframe>
     {{/if}}
-    <button type="button" name="printnametags" class="offset btn btn-default printnametags">Print</button>
+    <button type="button" name="printnametags" class="offset btn btn-default printnametags"><span class="glyphicon glyphicon-print"></span></button>
 </template>
 
 <template name="nametags">
@@ -840,7 +842,7 @@
 
 <template name="controls">
     <h4 id="alert">{{ControlMsg}}</h4>
-    <button type="submit" name="togglereg" class="btn btn-default togglereg">{{RegistrationControlButton}}</button>
+    <button type="submit" name="togglereg" class="btn btn-default togglereg"><span class="glyphicon glyphicon-off"></span>{{RegistrationControlButton}}</button>
 </template>
 
 <template name="classlist">

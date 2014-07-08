@@ -342,6 +342,14 @@ if (Meteor.isClient) {
         });
     });
     
+    Handlebars.registerHelper('indexArrayPlus', function(array){
+        return _.map(array, function(value, key){
+            key++;
+            var query = {index: key, value: value};
+            return query;
+        });
+    });
+
     Handlebars.registerHelper('indexCollection', function(collection){
         return collection.map(function(value, key){
             var query = {index: key, value: value};

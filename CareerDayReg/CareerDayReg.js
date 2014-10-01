@@ -6,6 +6,17 @@ Timeslots = new Meteor.Collection("timeslots");
 
 //Accounts.config({forbidClientAccountCreation: true});
 
+function liveCount(_id, timeslot) {
+    var classname = Classes.findOne({_id: _id}).classname;
+    var query = {};
+    query['classnames.'+timeslot] = classname;
+    var count = Students.find(query).fetch().length;
+    if(count!=null)
+        return count;
+    else
+        return 0;
+}
+
 if (Meteor.isClient) {
 
     Meteor.startup(function(){
@@ -322,7 +333,7 @@ if (Meteor.isClient) {
     });
 
     Handlebars.registerHelper('getCurrentUsername', function(){
-        return Meteor.user().emails[0].address;
+        return Meteor.user().username;
     });
 
     Handlebars.registerHelper('sum', function(param1, param2){
@@ -356,17 +367,6 @@ if (Meteor.isClient) {
             return query;
         });
     });
-
-    function liveCount(_id, timeslot) {
-        var classname = Classes.findOne({_id: _id}).classname;
-        var query = {};
-        query['classnames.'+timeslot] = classname;
-        var count = Students.find(query).fetch().length;
-        if(count!=null)
-            return count;
-        else
-            return 0;
-    }
 
     function registrationControlMsgUpdate() {
         Meteor.call('isRegistrationEnabled', function(error,enabled){
@@ -704,8 +704,6 @@ if (Meteor.isClient) {
     
 	Template.form.events({
     	'click .register': function(){
-            Meteor.call('isRegistrationEnabled', function(error,enabled){
-      		if(enabled) {
             var fname = $('.fname').val();
       		var lname = $('.lname').val();
             var schoolcode = $('.schoolcode').val();
@@ -713,56 +711,19 @@ if (Meteor.isClient) {
                 return $(this).find(":selected").data('meteor-id');
             }));
 
-            var school = Schools.findOne({schoolcode: schoolcode});
-            
-            if(fname!="" && lname!="") {
-            if(school!=null) {
-            Meteor.call('getNumClasses', function(error,numClasses){
-            if(selectedClasses.length==numClasses) {
-                var ids = [];
-                var classnames = [];
-                var i = 0;
-                var overflowed = false;
-                _.each(selectedClasses, function(id, i){
-                    var selectedClass = Classes.findOne({_id: id});
-                    if(liveCount(selectedClass._id, i)<selectedClass.classsizelimit) {
-                        ids.push(id);
-                    } else {
-                        overflowed = true;
-                        return false;
-                    }
-                    i++;
-                });
-
-            if(!overflowed) {    
-                for(var i=0; i<ids.length; i++) {
-                    classnames.push(Classes.findOne({_id: ids[i]}).classname);
-                }
+            Meteor.call('register', fname, lname, schoolcode, selectedClasses, function(error, response) {
+                if(response == '') {
+                    $('.register').prop("disabled", true);
+                    setTimeout(function(){
+                    $('.register').prop("disabled", false);
+                    }, 5000);
                     
-                Meteor.call('getServerTime', function(error, timeobject) {
-                    time = timeobject.toISOString();
-                    Students.insert({fname:fname, lname:lname, schoolname:school.schoolname, classnames:classnames, time:time});
-                });
+                    Session.set("registermsg", "");
 
-                $('.register').prop("disabled", true);
-                setTimeout(function(){
-                $('.register').prop("disabled", false);
-                }, 5000);
-                
-                Session.set("registermsg", "");
-
-                Router.go('success');
-            } else
-                Session.set("registermsg", "One or more of your requested classes is already full");
-            } else
-                Session.set("registermsg", "Please select exactly "+numClasses+" classes");
-            });
-            } else
-                Session.set("registermsg", "Please input a valid school code");
-            } else
-                Session.set("registermsg", "Please input a first and last name");
-    	    } else
-                Session.set("registermsg", "Registration is currently disabled");
+                    Router.go('success');
+                } else {
+                    Session.set("registermsg", response);
+                }
             });
         }
     })
@@ -815,6 +776,62 @@ if (Meteor.isServer) {
             
             csvStream.write(null);
             return "roster.csv";
+        },
+
+        register: function(fname, lname, schoolcode, selectedClasses){
+            if(registrationEnabled) {
+                var school = Schools.findOne({schoolcode: schoolcode});
+                
+                if(fname!="" && lname!="") {
+                    if(school!=null) {
+                        if(selectedClasses.length == numClasses) {
+                           
+                            for(var i = 0; i < selectedClasses.length; i++) {
+                                for(var j = i + 1; j < selectedClasses.length; j++) {
+                                    if (selectedClasses[i] == selectedClasses[j]) return "You cannot select more than one of the same class";
+                                }
+                            }
+
+                            var ids = [];
+                            var classnames = [];
+                            var i = 0;
+                            var overflowed = false;
+                            _.each(selectedClasses, function(id, i){
+                                var selectedClass = Classes.findOne({_id: id}); 
+                                if(liveCount(selectedClass._id, i)<selectedClass.classsizelimit) {
+                                    ids.push(id);
+                                } else {
+                                    overflowed = true;
+                                    return false;
+                                }
+                                i++;
+                            });
+
+                            if(!overflowed) {    
+                                for(var i=0; i<ids.length; i++) {
+                                    classnames.push(Classes.findOne({_id: ids[i]}).classname);
+                                }
+                             
+                                var timeobject = new Date;
+                                var time = timeobject.toISOString();
+                                Students.insert({fname:fname, lname:lname, schoolname:school.schoolname, classnames:classnames, time:time});
+                                
+                                return "";
+                            } else {
+                               return "One or more of your requested classes is already full"; 
+                            }
+                        } else {
+                            return "Please select exactly "+numClasses+" classes";
+                        }
+                    } else {
+                        return "Please input a valid school code";
+                    }
+                } else {
+                    return "Please input a first and last name";
+                }
+            } else {
+                return "Registration is currently disabled";
+            }
         },
 
         isRegistrationEnabled: function(){

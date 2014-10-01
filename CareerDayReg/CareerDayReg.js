@@ -3,6 +3,7 @@ Classes = new Meteor.Collection("classes");
 Schools = new Meteor.Collection("schools");
 Clusters = new Meteor.Collection("clusters");
 Timeslots = new Meteor.Collection("timeslots");
+General = new Meteor.Collection("general");
 
 //Accounts.config({forbidClientAccountCreation: true});
 
@@ -39,6 +40,7 @@ if (Meteor.isClient) {
         Session.set('printing', false);
         Session.set('editingNumClasses', false);
         Session.set('selectedListClass', []);
+        Session.set('editingMainDescription', false);
     });
 
     Router.onRun(function(){
@@ -61,6 +63,7 @@ if (Meteor.isClient) {
         Session.set('printing', false);
         Session.set('editingNumClasses', false);
         Session.set('selectedListClass', []);
+        Session.set('editingMainDescription', false);
     });
     
     Template.roster.students = function(){
@@ -141,6 +144,14 @@ if (Meteor.isClient) {
 
     Template.general.timeslots = function(){
         return Timeslots.find({}, {sort: {slot: 1}});
+    }
+
+    Template.general.maindescription = function(){
+        return General.findOne().maindescription;
+    }
+
+    Template.home.maindescription = function(){
+        return General.findOne().maindescription;
     }
 
     Template.classentry.clusters = function(){
@@ -276,6 +287,10 @@ if (Meteor.isClient) {
 
     Handlebars.registerHelper('editingGeneralSettings', function(){
         return Session.get('isEditingGeneralSettings');
+    });
+
+    Handlebars.registerHelper('editingMainDescription', function() {
+        return Session.get('editingMainDescription');
     });
 
     Handlebars.registerHelper('editingNumClasses', function(){
@@ -699,6 +714,22 @@ if (Meteor.isClient) {
 
         'click .printnametags': function(){
             Session.set('printing', true);
+        },
+
+        'click .editmaindescription': function() {
+            Session.set('editingMainDescription', true);
+        },
+
+        'click .cancelmaindescription': function() {
+            Session.set('editingMainDescription', false);
+        },
+
+        'click .savemaindesciption': function() {
+            var main = $('.maindescriptionentry').val();
+            Meteor.call('clearGeneral', function(error) {
+                General.insert({maindescription: main});    
+            });
+            Session.set('editingMainDescription', false);
         }
     });
     
@@ -751,6 +782,10 @@ if (Meteor.isServer) {
         
         clearTimeslots: function() {
             Timeslots.remove({});
+        },
+
+        clearGeneral: function() {
+            General.remove({});
         },
 
         generateCsvFile: function() {

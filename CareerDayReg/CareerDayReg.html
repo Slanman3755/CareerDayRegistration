@@ -8,9 +8,14 @@
 </template>
 
 <template name="home">
-    <h1 id='hometext'>Career Conference</h1>
-    <a href="{{pathFor 'register'}}"><h3>Click here to register!</h3></a>
-    <nav><a href="{{pathFor 'roster'}}">Admin</a></nav>
+    <div align="center">
+        <h1 id='hometext'>Career Conference</h1>
+        <div align="center">
+            <h4>{{{maindescription}}}</h4>
+        </div>
+        <a href="{{pathFor 'register'}}"><h3>Click here to register!</h3></a>
+        <nav><a href="{{pathFor 'roster'}}">Admin</a></nav>
+    </div>
 </template>
 
 <template name="success">
@@ -339,9 +344,40 @@
                         {{/each}}
                     </div>
                 </ul>
-                <div class="btn-group" align="center">
-                    <button type="button" name="savegeneralsettings" class="btn btn-default savegeneralsettings"><span class="glyphicon glyphicon-ok"></span></button>
-                    <button type="button" name="cancelgeneralsettings" class="btn btn-default cancelgeneralsettings"><span class="glyphicon glyphicon-remove"></span></button>
+                <div align="center">
+                    <div class="btn-group">
+                        <button type="button" name="savegeneralsettings" class="btn btn-default savegeneralsettings"><span class="glyphicon glyphicon-ok"></span></button>
+                        <button type="button" name="cancelgeneralsettings" class="btn btn-default cancelgeneralsettings"><span class="glyphicon glyphicon-remove"></span></button>
+                    </div>
+                </div>
+            </li>
+        {{/unless}}
+    </ul>
+    <ul class="list-group container">
+        <li class="list-group-item">
+            <div align="center">
+                <h4>Home Page Description</h4>
+            </div>
+        </li>
+        {{#unless editingMainDescription}}
+            <li class="list-group-item">
+            <div align="center">
+                {{{maindescription}}}
+            </div>
+            <div align="center">
+                <button type="button" name="editmaindescription" class="btn btn-default editmaindescription"><span class="glyphicon glyphicon-pencil"></span></button>
+            </div>
+            </li>
+        {{else}}
+            <li class="list-group-item">
+                <div align="center">
+                    <textarea rows=4 style="resize:vertical;" name="maindescriptionentry" class="form-control maindescriptionentry">{{maindescription}}</textarea>
+                </div>
+                <div align="center">
+                    <div class="btn-group">
+                        <button type="button" name="savemaindescription" class="btn btn-default savemaindesciption"><span class="glyphicon glyphicon-ok"></span></button>
+                        <button type="button" name="cancelmaindescription" class="btn btn-default cancelmaindescription"><span class="glyphicon glyphicon-remove"></span></button>
+                    </div>
                 </div>
             </li>
         {{/unless}}

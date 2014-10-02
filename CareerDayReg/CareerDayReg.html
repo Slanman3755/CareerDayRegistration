@@ -446,6 +446,11 @@
                                 <span><h4>Time Slot: {{timeslot classtimeslot}}</h4></span>
                             </div>
                         </th>
+                        <th class="col-sm-2">
+                            <div align="center">
+                                <span><h4>Required: {{classrequired}}</h4></span>
+                            </div>
+                        </th>
                         <th class="col-sm-1">
                             <div align="center">
                                 <span><h4>{{classgroup}}</h4></span>
@@ -462,7 +467,7 @@
                         {{else}}
                             <th class="col-sm-1">
                                 <div align="right">
-                                    <span><h4>{{livecount _id classtimeslot}}/{{classsizelimit}}</h4></span>
+                                    <span><h4>{{livecount _id -1}}/{{classsizelimit}}</h4></span>
                                 </div>
                             </th>
                         {{/if}}
@@ -520,6 +525,17 @@
                         <th class="col-sm-2">
                             <div align="center">
                                 <span>
+                                    Required:
+                                    <select name="classrequiredentry" class="form-control classrequiredentry">
+                                        <option value="No">No</option>
+                                        <option value="Yes">Yes</option>
+                                    </select>
+                                </span>
+                            </div>
+                        </th>
+                        <th class="col-sm-2">
+                            <div align="center">
+                                <span>
                                     Group:
                                     <select name="classgroupentry" class="form-control classgroupentry">
                                         {{#each clusters}}
@@ -545,13 +561,13 @@
                 </thead>
                 <tbody>
                     <tr>
-                        <td colspan="8">
+                        <td colspan="10">
                             Description:
                             <textarea rows=4 style="resize:vertical;" name="classdescriptionentry" class="form-control classdescriptionentry">{{classdescription}}</textarea>
                         </td>
                     </tr>
                     <tr>
-                        <td colspan="8">
+                        <td colspan="10">
                             <div align="right">
                                 <div class="btn-group">
                                     <button type="button" name="saveclass" class="saveclass btn btn-default"><span class="glyphicon glyphicon-ok"></span></button>
@@ -617,10 +633,19 @@
                 <th class="col-sm-2">
                     <div align="center">
                         Time Slot:
-                        <select name="classgroupentry" class="form-control classgroupentry">
+                        <select name="classtimeslotentry" class="form-control classtimeslotentry">
                             {{#each inclusiveloop numClasses}}
                                 <option value="{{.}}">{{timeslot .}}</option>
                             {{/each}}
+                        </select>
+                    </div>
+                </th>
+                <th class="col-sm-2">
+                    <div align="center">
+                        Required:
+                        <select name="classrequiredentry" class="form-control classrequiredentry">
+                            <option value="No">No</option>
+                            <option value="Yes">Yes</option>
                         </select>
                     </div>
                 </th>
@@ -644,13 +669,13 @@
         </thead>
         <tbody>
         <tr>
-            <td colspan="4">
+            <td colspan="6">
                 Description:
                 <textarea rows=4 style="resize:vertical;" name="classdescriptionentry" class="form-control classdescriptionentry"></textarea>
             </td>
         </tr>
         <tr>
-            <td colspan="4">
+            <td colspan="6">
                 <div align="right">
                     <div class="btn-group">
                         <button type="button" name="savenewclass" class="savenewclass btn btn-default"><span class="glyphicon glyphicon-ok"></span></button>
@@ -711,17 +736,11 @@
 <table class="table table-condensed table-striped">
     <thead>
         <tr>
-            <th class="header-label-group">
+            <th colspan="1" class="header-label-group">
                 <span>Name</span>
             </th>
-            <th class="header-label-group">
+            <th colspan="2" class="header-label-group">
                 <span>Code</span>
-            </th>
-            <th class="header-label-group">
-                <span>Login</span>
-            </th>
-            <th class="header-label-group">
-                <span>Password</span>
             </th>
         </tr>
     </thead>
@@ -753,12 +772,6 @@
             {{schoolcode}}
         </td>
         <td>
-            {{schoollogin}}
-        </td>
-        <td>
-            {{schoolpassword}}
-        </td>
-        <td>
             <div class="btn-group">
                 <button type="button" name="editschool" class="btn btn-default editschool"><span class="glyphicon glyphicon-pencil"></span></button>
                 <button type="button" name="deleteschool" class="btn btn-default deleteschool"><span class="glyphicon glyphicon-trash"></span></button> 
@@ -770,12 +783,6 @@
         </td>
         <td>
             <input type="text" value="{{schoolcode}}" name="schoolcodeentry" class="form-control schoolcodeentry">
-        </td>
-        <td>
-            <input type="text" value="{{schoollogin}}" name="schoolloginentry" class="form-control schoolloginentry">
-        </td>
-        <td>
-            <input type="text" value="{{schoolpassword}}" name="schoolpasswordentry" class="form-control schoolpasswordentry">
         </td>
         <td>
             <div class="btn-group">
@@ -794,12 +801,6 @@
         </td>
         <td>
             <input type="text" name="schoolcodeentry" class="form-control schoolcodeentry">
-        </td>
-        <td>
-            <input type="text" name="schoolloginentry" class="form-control schoolloginentry">
-        </td>
-        <td>
-            <input type="text" name="schoolpasswordentry" class="form-control schoolpasswordentry">
         </td>
         <td>
             <div class="btn-group">

@@ -10,7 +10,8 @@ General = new Meteor.Collection("general");
 function liveCount(_id, timeslot) {
     var classname = Classes.findOne({_id: _id}).classname;
     var query = {};
-    query['classnames.'+timeslot] = classname;
+    if(timeslot>=0) query['classnames.'+timeslot] = classname;
+    else query['classnames'] = classname;
     var count = Students.find(query).fetch().length;
     if(count!=null)
         return count;
@@ -503,8 +504,9 @@ if (Meteor.isClient) {
             var classgroup = $('.classgroupentry').val();
             var classdescription = $('.classdescriptionentry').val();
             var classsizelimit = $('.classsizelimitentry').val();
+            var classrequired = $('.classrequiredentry').val();
 
-            Classes.update({_id: this._id},{classname: classname, classroom: classroom, classtimeslot: classtimeslot, classgroup: classgroup, classdescription: classdescription, classsizelimit: classsizelimit});
+            Classes.update({_id: this._id},{classname: classname, classroom: classroom, classtimeslot: classtimeslot, classgroup: classgroup, classdescription: classdescription, classsizelimit: classsizelimit, classrequired: classrequired});
             
             Session.set('selectedClasses', _.without(Session.get('selectedClasses'), this._id));
         },
@@ -516,8 +518,9 @@ if (Meteor.isClient) {
             var classgroup = $('.classgroupentry').val();
             var classdescription = $('.classdescriptionentry').val();
             var classsizelimit = $('.classsizelimitentry').val();
+            var classrequired = $('.classrequiredentry').val();
 
-            Classes.insert({classname: classname, classroom: classroom, classtimeslot: classtimeslot, classgroup: classgroup, classdescription: classdescription, classsizelimit: classsizelimit});
+            Classes.insert({classname: classname, classroom: classroom, classtimeslot: classtimeslot, classgroup: classgroup, classdescription: classdescription, classsizelimit: classsizelimit, classrequired: classrequired});
             
             Session.set('addnewclass', false);
         },
@@ -685,10 +688,8 @@ if (Meteor.isClient) {
         'click .saveschool': function(){ 
             var schoolname = $('.schoolnameentry').val();
             var schoolcode = $('.schoolcodeentry').val();
-            var schoollogin = $('.schoolloginentry').val();
-            var schoolpassword = $('.schoolpasswordentry').val();
 
-            Schools.update({_id: this._id},{schoolname: schoolname, schoolcode: schoolcode, schoollogin: schoollogin, schoolpassword: schoolpassword});
+            Schools.update({_id: this._id},{schoolname: schoolname, schoolcode: schoolcode});    
             
             Session.set('selectedSchools', _.without(Session.get('selectedSchools'), this._id));
         },
@@ -696,10 +697,8 @@ if (Meteor.isClient) {
         'click .savenewschool': function(){
             var schoolname = $('.schoolnameentry').val();
             var schoolcode = $('.schoolcodeentry').val();
-            var schoollogin = $('.schoolloginentry').val();
-            var schoolpassword = $('.schoolpasswordentry').val();
 
-            Schools.insert({schoolname: schoolname, schoolcode: schoolcode, schoollogin: schoollogin, schoolpassword: schoolpassword});
+            Schools.insert({schoolname: schoolname, schoolcode: schoolcode});
 
             Session.set('addnewschool', false);
         },
@@ -781,36 +780,40 @@ if (Meteor.isServer) {
         },
         
         clearTimeslots: function() {
-            Timeslots.remove({});
+            if(Meteor.user()) Timeslots.remove({});
         },
 
         clearGeneral: function() {
-            General.remove({});
+            if(Meteor.user()) General.remove({});
         },
 
         generateCsvFile: function() {
-            var csvStream = csv.createWriteStream({headers: true});
-            writableStream = fs.createWriteStream("/tmp/" + "roster"  + ".csv");
-            writableStream.on('finish', function(){
-                console.log("Done generating CSV file");
-            });
+            if(Meteor.user()) {
+                var csvStream = csv.createWriteStream({headers: true});
+                writableStream = fs.createWriteStream("/tmp/" + "roster"  + ".csv");
+                writableStream.on('finish', function(){
+                    console.log("Done generating CSV file");
+                });
 
-            csvStream.pipe(writableStream);       
+                csvStream.pipe(writableStream);       
 
-            var roster = Students.find().fetch();
+                var roster = Students.find().fetch();
 
-            for(var i=0; i<roster.length; i++) {
-                var query = {
-                    FirstName: roster[i].fname,
-                    LastName: roster[i].lname,
-                    School: roster[i].schoolname};
-                for(var j=0; j<roster[i].classnames.length; j++) query["Class"+(j+1)] = roster[i].classnames[j];
-                query["Time"] = roster[i].time;
-                csvStream.write(query);
+                for(var i=0; i<roster.length; i++) {
+                    var query = {
+                        FirstName: roster[i].fname,
+                        LastName: roster[i].lname,
+                        School: roster[i].schoolname};
+                    for(var j=0; j<roster[i].classnames.length; j++) query["Class"+(j+1)] = roster[i].classnames[j];
+                    query["Time"] = roster[i].time;
+                    csvStream.write(query);
+                }
+                
+                csvStream.write(null);
+                return "roster.csv";
             }
-            
-            csvStream.write(null);
-            return "roster.csv";
+
+            return null;
         },
 
         register: function(fname, lname, schoolcode, selectedClasses){
@@ -820,12 +823,21 @@ if (Meteor.isServer) {
                 if(fname!="" && lname!="") {
                     if(school!=null) {
                         if(selectedClasses.length == numClasses) {
-                           
+                            var requiredClasses = Classes.find({classrequired:'Yes'}).fetch();
+                            var check = 0;
+
                             for(var i = 0; i < selectedClasses.length; i++) {
                                 for(var j = i + 1; j < selectedClasses.length; j++) {
                                     if (selectedClasses[i] == selectedClasses[j]) return "You cannot select more than one of the same class";
                                 }
+                                if(requiredClasses) {
+                                    for(var j = 0; j < requiredClasses.length; j++) {
+                                        if (requiredClasses[j].classname == Classes.findOne({_id: selectedClasses[i]}).classname) check++;
+                                    }
+                                }
                             }
+
+                            if (check < requiredClasses.length) return "You are missing a required class";
 
                             var ids = [];
                             var classnames = [];
@@ -874,7 +886,7 @@ if (Meteor.isServer) {
         },
 
         toggleRegistrationEnabled: function(){
-            registrationEnabled = !registrationEnabled;
+            if(Meteor.user()) registrationEnabled = !registrationEnabled;
         },
 
         getNumClasses: function(){
@@ -882,7 +894,7 @@ if (Meteor.isServer) {
         },
 
         setNumClasses: function(num){
-            numClasses = num;
+            if(Meteor.user()) numClasses = num;
         }
     });
 

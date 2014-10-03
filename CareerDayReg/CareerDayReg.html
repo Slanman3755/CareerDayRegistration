@@ -131,7 +131,7 @@
 <template name="timeslotlist">
     <li class="list-group-item">
         <div class="input-group">
-            <span class="input-group-addon">Time Slot {{sum . 1}}</span>
+            <span class="input-group-addon">Time Slot {{timeslot .}}</span>
             <select class="form-control classselect" name="classselect">
                 {{#each clusters}}
                     <option disabled>{{clustername}}</option>
@@ -485,7 +485,12 @@
                         </th>
                         <th class="col-sm-2">
                             <div align="center">
-                                <span><h4>Time Slot: {{timeslot classtimeslot}}</h4></span>
+                                <span><h4>
+                                    Time Slot: 
+                                    {{#each classtimeslot}}
+                                        {{timeslot .}}
+                                    {{/each}}
+                                </h4></span>
                             </div>
                         </th>
                         <th class="col-sm-2">
@@ -498,21 +503,15 @@
                                 <span><h4>{{classgroup}}</h4></span>
                             </div>
                         </th>
-                        {{#if equals classtimeslot "0"}}
-                            {{#each loop numClasses}}
-                                <th class="col-sm-1">
-                                    <div align="right">
-                                        <span><h4>{{livecount ../_id .}}/{{../classsizelimit}}</h4></span>
-                                    </div>
-                                </th>
-                            {{/each}}
-                        {{else}}
-                            <th class="col-sm-1">
-                                <div align="right">
-                                    <span><h4>{{livecount _id -1}}/{{classsizelimit}}</h4></span>
-                                </div>
-                            </th>
-                        {{/if}}
+                        <th class="col-sm-1">
+                            <div align="right">
+                                <span><h4>
+                                    {{#each classtimeslot}}
+                                        {{livecount ../_id .}}/{{../classsizelimit}}
+                                    {{/each}}
+                                </h4></span>
+                            </div>
+                        </th>
                     </tr>
                 </thead>
                 <tbody>
@@ -552,15 +551,15 @@
                             <div align="center">
                                 <span>
                                     Time Slot:
-                                    <select name="classtimeslotentry" class="form-control classtimeslotentry">
-                                        {{#each inclusiveloop numClasses}}
-                                            {{#unless equals ../classtimeslot .}}
-                                                <option value="{{.}}">{{timeslot .}}</option>
+                                    <form action="action" name="classtimeslotentry" class="form-control classtimeslotentry">
+                                        {{#each loop numClasses}}
+                                            {{#unless contains ../classtimeslot .}}
+                                                <input class="classtimeslotbox" type="checkbox" value="{{.}}">
                                             {{else}}
-                                                <option value="{{.}}" selected>{{timeslot .}}</option>
+                                                <input class="classtimeslotbox" type="checkbox" value="{{.}}" checked>
                                             {{/unless}}
                                         {{/each}}
-                                    </select>
+                                    </form>
                                 </span>
                             </div>
                         </th>
@@ -675,11 +674,11 @@
                 <th class="col-sm-2">
                     <div align="center">
                         Time Slot:
-                        <select name="classtimeslotentry" class="form-control classtimeslotentry">
-                            {{#each inclusiveloop numClasses}}
-                                <option value="{{.}}">{{timeslot .}}</option>
+                        <form name="classtimeslotentry" class="form-control classtimeslotentry">
+                            {{#each loop numClasses}}
+                                <input class="classtimeslotbox" type="checkbox" value="{{.}}">
                             {{/each}}
-                        </select>
+                        </form>
                     </div>
                 </th>
                 <th class="col-sm-2">
@@ -854,8 +853,14 @@
 </template>
 
 <template name="print">
-    <button type="button" name="getcsv" class="offset btn btn-default getcsv">Get Roster CSV File</button>
-    <button type="button" name="getcodes" class="offset btn btn-default getcodes">Get Codes CSV File</button>
+    <div align="center"><h3>Files</h3></div>
+    <div align="center">
+        <button type="button" name="getcsv" class="offset btn btn-default getcsv">Get Roster CSV File</button>
+        <button type="button" name="getcodes" class="offset btn btn-default getcodes">Get Codes CSV File</button>
+    </div>
+    <div align="center">
+        <h3>Template</h3>
+    </div>
     <div class="panel panel-default nametag">
         <div class="panel-body">
             <div>
@@ -865,26 +870,25 @@
                 School
             </div>
             <div>
-                General
+                Time    Session 1 Room #
             </div>
             <div>
-                9:10-9:30   Session 1 Room #
+                Time    Session 2 Room #
             </div>
             <div>
-                9:35-9:55   Session 2 Room #
+                Time    Session 3 Room #
             </div>
             <div>
-                10:05-10:25 Session 3 Room #
-            </div>
-            <div>
-                10:30-11:00 Session 4 Room #
+                Time    Session 4 Room #
             </div>
         </div>
     </div>
     {{#if printing}}
         <iframe src="{{pathFor 'nametags'}}" hidden></iframe>
     {{/if}}
-    <button type="button" name="printnametags" class="offset btn btn-default printnametags"><span class="glyphicon glyphicon-print"></span></button>
+    <div align="center">
+        <button type="button" name="printnametags" class="offset btn btn-default printnametags"><span class="glyphicon glyphicon-print"></span></button>
+    </div>
 </template>
 
 <template name="nametags">
@@ -896,9 +900,6 @@
                 </div>
                 <div>
                     {{schoolname}}
-                </div>
-                <div>
-                    General
                 </div>
                 {{#each indexArray classnames}}
                     <div>

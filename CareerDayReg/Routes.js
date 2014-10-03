@@ -9,6 +9,7 @@ Router.map(function() {
     this.route('schools', {path: '/admin/controlpanel/schools/', layoutTemplate: 'admin'});
     this.route('print', {path: '/admin/controlpanel/print/', layoutTemplate: 'admin'});
     this.route('controls', {path: '/admin/controlpanel/controls/', layoutTemplate: 'admin'});
+    this.route('codes', {path: '/admin/controlpanel/codes/', layoutTemplate: 'admin'});
 
     this.route('nametags', {path:'/admin/controlpanel/print/nametags', layoutTemplate: 'main'});
 });

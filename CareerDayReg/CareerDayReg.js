@@ -4,6 +4,7 @@ Schools = new Meteor.Collection("schools");
 Clusters = new Meteor.Collection("clusters");
 Timeslots = new Meteor.Collection("timeslots");
 General = new Meteor.Collection("general");
+Codes = new Meteor.Collection("codes");
 
 //Accounts.config({forbidClientAccountCreation: true});
 
@@ -13,10 +14,11 @@ function liveCount(_id, timeslot) {
     if(timeslot>=0) query['classnames.'+timeslot] = classname;
     else query['classnames'] = classname;
     var count = Students.find(query).fetch().length;
-    if(count!=null)
+    if(count!=null) {
         return count;
-    else
+    } else {
         return 0;
+    }
 }
 
 if (Meteor.isClient) {
@@ -177,6 +179,10 @@ if (Meteor.isClient) {
 
     Template.controls.RegistrationControlButton = function() {
         return Session.get('registrationcontrolbutton');
+    }
+
+    Template.codes.codes = function() {
+        return Codes.find();
     }
   
     Handlebars.registerHelper('nametagstudents', function(){
@@ -418,6 +424,14 @@ if (Meteor.isClient) {
         
         'click .getcsv': function(){
             Meteor.call('generateCsvFile', function(error, filename){
+                if(error) throw error;
+                console.log(filename);
+                window.location = '/files/' + filename;
+            });
+        },
+
+        'click .getcodes': function() {
+            Meteor.call('generateCodesCsvFile', function(error, filename) {
                 if(error) throw error;
                 console.log(filename);
                 window.location = '/files/' + filename;
@@ -729,31 +743,41 @@ if (Meteor.isClient) {
                 General.insert({maindescription: main});    
             });
             Session.set('editingMainDescription', false);
+        },
+
+        'click .deletecodes': function() {
+            if(confirm("Are you sure you want to delete ALL the generated codes?")) Meteor.call('deleteCodes');
+        },
+
+        'click .generatecodes': function() {
+            Meteor.call('generateCodes', $('.codequantity').val());
         }
     });
     
 	Template.form.events({
     	'click .register': function(){
+            
+            $('.register').prop("disabled", true);
+
             var fname = $('.fname').val();
       		var lname = $('.lname').val();
             var schoolcode = $('.schoolcode').val();
+            var studentcode = $('.studentcode').val();
             var selectedClasses = $.makeArray($('.classselect').map(function(){
                 return $(this).find(":selected").data('meteor-id');
             }));
 
-            Meteor.call('register', fname, lname, schoolcode, selectedClasses, function(error, response) {
+            Meteor.call('register', fname, lname, schoolcode, studentcode, selectedClasses, function(error, response) {
                 if(response == '') {
-                    $('.register').prop("disabled", true);
-                    setTimeout(function(){
-                    $('.register').prop("disabled", false);
-                    }, 5000);
-                    
                     Session.set("registermsg", "");
-
                     Router.go('success');
                 } else {
                     Session.set("registermsg", response);
                 }
+
+                setTimeout(function(){
+                    $('.register').prop("disabled", false);
+                }, 2000);
             });
         }
     })
@@ -787,6 +811,10 @@ if (Meteor.isServer) {
             if(Meteor.user()) General.remove({});
         },
 
+        deleteCodes: function() {
+            if(Meteor.user()) Codes.remove({});
+        },
+
         generateCsvFile: function() {
             if(Meteor.user()) {
                 var csvStream = csv.createWriteStream({headers: true});
@@ -801,8 +829,8 @@ if (Meteor.isServer) {
 
                 for(var i=0; i<roster.length; i++) {
                     var query = {
-                        FirstName: roster[i].fname,
-                        LastName: roster[i].lname,
+                        'First Name': roster[i].fname,
+                        'Last Name': roster[i].lname,
                         School: roster[i].schoolname};
                     for(var j=0; j<roster[i].classnames.length; j++) query["Class"+(j+1)] = roster[i].classnames[j];
                     query["Time"] = roster[i].time;
@@ -816,12 +844,41 @@ if (Meteor.isServer) {
             return null;
         },
 
-        register: function(fname, lname, schoolcode, selectedClasses){
+        generateCodesCsvFile: function() {
+            if(Meteor.user()) {
+                var csvStream = csv.createWriteStream({headers: true});
+                writableStream = fs.createWriteStream("/tmp/" + "codes"  + ".csv");
+                writableStream.on('finish', function(){
+                    console.log("Done generating CSV file");
+                });
+
+                csvStream.pipe(writableStream);       
+
+                var codes = Codes.find().fetch();
+
+                for(var i=0; i<codes.length; i++) {
+                    var query = {
+                        Code: codes[i].code,
+                        Available: codes[i].available};
+                    csvStream.write(query);
+                }
+                
+                csvStream.write(null);
+                return "codes.csv";
+            }
+
+            return null;
+        },
+
+        register: function(fname, lname, schoolcode, studentcode, selectedClasses){
             if(registrationEnabled) {
                 var school = Schools.findOne({schoolcode: schoolcode});
                 
                 if(fname!="" && lname!="") {
                     if(school!=null) {
+
+                        if(Codes.find({code: studentcode, available: 'Yes'}).count() <= 0) return "Please input a valid unclaimed student code";
+
                         if(selectedClasses.length == numClasses) {
                             var requiredClasses = Classes.find({classrequired:'Yes'}).fetch();
                             var check = 0;
@@ -862,7 +919,8 @@ if (Meteor.isServer) {
                                 var timeobject = new Date;
                                 var time = timeobject.toISOString();
                                 Students.insert({fname:fname, lname:lname, schoolname:school.schoolname, classnames:classnames, time:time});
-                                
+                                Codes.update({code: studentcode}, {code: studentcode, available: 'No'});
+
                                 return "";
                             } else {
                                return "One or more of your requested classes is already full"; 
@@ -895,6 +953,14 @@ if (Meteor.isServer) {
 
         setNumClasses: function(num){
             if(Meteor.user()) numClasses = num;
+        },
+
+        generateCodes: function(quantity) {
+            if(Meteor.user() && quantity <=1000) {
+                for(var i = 0; i < quantity; i++) {
+                    Codes.insert({code: new Meteor.Collection.ObjectID()._str.substring(0, 10), available:'Yes'});
+                }
+            }
         }
     });
 

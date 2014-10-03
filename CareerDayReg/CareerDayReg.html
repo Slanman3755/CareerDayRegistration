@@ -25,21 +25,25 @@
 
 <template name="admin">
     <div><h2>Administrative Control Panel</h2></div>
+    
     {{#if currentUser}}
         <div>
             <span class="glyphicon glyphicon-user"></span>Logged in as {{getCurrentUsername}}
             <button type="submit" name="signout" class="btn btn-default signout">Signout</button>
         </div>
     {{/if}}
+    
+    {{#if currentUser}}
         <ul class="nav nav-tabs">
             <li><a href="{{pathFor 'roster'}}"><h3>Roster</h3></a></li>
             <li><a href="{{pathFor 'general'}}"><h3>General</h3></a></li>
             <li><a href="{{pathFor 'classes'}}"><h3>Classes</h3></a></li>
             <li><a href="{{pathFor 'schools'}}"><h3>Schools</h3></a></li>
+            <li><a href="{{pathFor 'codes'}}"><h3>Codes</h3></a></li>
             <li><a href="{{pathFor 'print'}}"><h3>Print</h3></a></li>
             <li><a href="{{pathFor 'controls'}}"><h3>Controls</h3></a></li>
         </ul>
-    {{#if currentUser}}
+ 
         <div>
             {{> yield}}
         </div> 
@@ -58,12 +62,12 @@
             </tr>
         </table>
     {{/if}}
-    <nav><a href="{{pathFor 'home'}}"><h4>Home</h4></a></nav>
+    <div align="left"><a href="{{pathFor 'home'}}"><h3>Home</h3></a></div>
 </template>
 
 <template name="register">
     <div>{{> form}}</div>
-    <div><a href="{{pathFor 'home'}}"><h4>Home</h4></a></div>
+    <div align="center"><a href="{{pathFor 'home'}}"><h3>Home</h3></a></div>
 </template>
 
 <template name="form">
@@ -86,6 +90,12 @@
                 <span class="form-label">
                     <span style="float:left;min-width:150px;">School Code</span>
                     <input type="text" style="max-width:150px;" value="" name="schoolcode" id="schoolcode" class="schoolcode">
+                </span>
+            </li>
+            <li>
+                <span class="form-label">
+                    <span style="float:left;min-width:150px;">Student Code</span>
+                    <input type="text" style="max-width:150px;" value="" name="studentcode" id="studentcode" class="studentcode">
                 </span>
             </li>
         </ul>
@@ -134,6 +144,38 @@
     </li>
 </template>
 
+<template name="codes">
+    <div class="row">
+        <div class="form-group col-lg-7">
+            <button type="button" name="deletecodes" class="btn btn-default deletecodes">Delete Codes</button>
+            <button type="button" name="generatecodes" class="btn btn-default generatecodes">Generate Codes</button>
+            Quantity:
+            <input type="number" val="{{codequantity}}" name="codequantity" class="form-control codequantity">
+            <span id="alert">Cannot generate over 1000 at a time</span>
+        </div>
+    </div>
+    <table class="table table-condensed table-striped">
+        <thead>
+            <tr>
+                <th>Code</th>
+                <th>Available</th>
+            </tr>
+        </thead>
+        <tbody>
+        {{#each codes}}
+            <tr>
+                <td>
+                    {{code}}
+                </td>
+                <td>
+                    {{available}}
+                </td>
+            </tr>
+        {{/each}}
+        </tbody>
+    </table>
+</template>
+
 <template name="roster">
     <div class="row">
         <div class="col-lg-4">
@@ -163,7 +205,7 @@
                     <span>Class {{.}}</span>
                 </th>
 			{{/each}}
-            <th><div class="input-group">
+            <th colspan="2"><div class="input-group">
                 <span class="input-group-addon">Time</span>
                 <span class="input-group-btn"><button input="submit" name="timesort" class="btn btn-default timesort">Sort</button></span>
             </div></th>
@@ -812,7 +854,8 @@
 </template>
 
 <template name="print">
-    <button type="submit" name="getcsv" class="offset btn btn-default getcsv">Get CSV File</button>
+    <button type="button" name="getcsv" class="offset btn btn-default getcsv">Get Roster CSV File</button>
+    <button type="button" name="getcodes" class="offset btn btn-default getcodes">Get Codes CSV File</button>
     <div class="panel panel-default nametag">
         <div class="panel-body">
             <div>

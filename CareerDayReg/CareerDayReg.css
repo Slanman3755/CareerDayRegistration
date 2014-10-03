@@ -92,3 +92,7 @@ div {
     font-weight: bold;
 }
 
+.form-group input {
+    width: auto;
+    display: inline;
+}

@@ -1,6 +1,6 @@
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Career Conference Registration</title>
+    <title>Wayne County Career Conference</title>
 </head>
 
 <template name="main">
@@ -9,17 +9,17 @@
 
 <template name="home">
     <div align="center">
-        <h1 id='hometext'>Career Conference</h1>
-        <div align="center">
+        <h1 id='hometext'>Wayne County Career Conference</h1>
+        <div class="panel panel-default container" align="center">
             <h4>{{{maindescription}}}</h4>
+            <a href="{{pathFor 'register'}}"><h3>Click here to register!</h3></a>
         </div>
-        <a href="{{pathFor 'register'}}"><h3>Click here to register!</h3></a>
         <nav><a href="{{pathFor 'roster'}}">Admin</a></nav>
     </div>
 </template>
 
 <template name="success">
-    <h1>You have succesfully registered for the Career Conference!</h1>
+    <h1>You have succesfully registered for the Wayne County Career Conference!</h1>
     <nav><a href="{{pathFor 'home'}}"><h4>Home</h4></a></nav>
 </template>
 
@@ -133,6 +133,7 @@
         <div class="input-group">
             <span class="input-group-addon">Time Slot {{timeslot .}}</span>
             <select class="form-control classselect" name="classselect">
+                <option selected hidden disabled value=""></option>
                 {{#each clusters}}
                     <option disabled>{{clustername}}</option>
                     {{#each classSelector clustername ..}}

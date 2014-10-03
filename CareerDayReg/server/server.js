@@ -1,6 +1,131 @@
 
+
 if (Meteor.isServer) {
-    
+   
+    Students = new Meteor.Collection("students");
+    Classes = new Meteor.Collection("classes");
+    Schools = new Meteor.Collection("schools");
+    Clusters = new Meteor.Collection("clusters");
+    Timeslots = new Meteor.Collection("timeslots");
+    General = new Meteor.Collection("general");
+    Codes = new Meteor.Collection("codes");
+
+    Students.allow({
+        insert: function(userId) {
+            return userId;
+        },
+        
+        update: function(userId) {
+            return userId;
+        },
+
+        remove: function(userId) {
+            return userId;
+        }
+    });
+
+    Classes.allow({
+        insert: function(userId) {
+            return userId;
+        },
+        
+        update: function(userId) {
+            return userId;
+        },
+
+        remove: function(userId) {
+            return userId;
+        }
+    });
+
+
+    Schools.allow({
+        insert: function(userId) {
+            return userId;
+        },
+        
+        update: function(userId) {
+            return userId;
+        },
+
+        remove: function(userId) {
+            return userId;
+        }
+    });
+
+
+    Clusters.allow({
+        insert: function(userId) {
+            return userId;
+        },
+        
+        update: function(userId) {
+            return userId;
+        },
+
+        remove: function(userId) {
+            return userId;
+        }
+    });
+
+
+    Timeslots.allow({
+        insert: function(userId) {
+            return userId;
+        },
+        
+        update: function(userId) {
+            return userId;
+        },
+
+        remove: function(userId) {
+            return userId;
+        }
+    });
+
+
+    General.allow({
+        insert: function(userId) {
+            return userId;
+        },
+        
+        update: function(userId) {
+            return userId;
+        },
+
+        remove: function(userId) {
+            return userId;
+        }
+    });
+
+
+    Codes.allow({
+        insert: function(userId) {
+            return userId;
+        },
+        
+        update: function(userId) {
+            return userId;
+        },
+
+        remove: function(userId) {
+            return userId;
+        }
+    });
+
+
+    function liveCount(_id, timeslot) {
+        var classname = Classes.findOne({_id: _id}).classname;
+        var query = {};
+        query['classnames.'+timeslot] = classname;
+        var count = Students.find(query).fetch().length;
+        if(count!=null) {
+            return count;
+        } else {
+            return 0;
+        }
+    }
+
     registrationEnabled = false;
     numClasses = 4;
 
@@ -174,7 +299,7 @@ if (Meteor.isServer) {
         generateCodes: function(quantity) {
             if(Meteor.user() && quantity <=1000) {
                 for(var i = 0; i < quantity; i++) {
-                    Codes.insert({code: new Meteor.Collection.ObjectID()._str.substring(0, 10), available:'Yes'});
+                    Codes.insert({code: new Meteor.Collection.ObjectID()._str.substring(0, 7), available:'Yes'});
                 }
             }
         }

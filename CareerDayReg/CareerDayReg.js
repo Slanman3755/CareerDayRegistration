@@ -1,25 +1,25 @@
-Students = new Meteor.Collection("students");
-Classes = new Meteor.Collection("classes");
-Schools = new Meteor.Collection("schools");
-Clusters = new Meteor.Collection("clusters");
-Timeslots = new Meteor.Collection("timeslots");
-General = new Meteor.Collection("general");
-Codes = new Meteor.Collection("codes");
-
-
-function liveCount(_id, timeslot) {
-    var classname = Classes.findOne({_id: _id}).classname;
-    var query = {};
-    query['classnames.'+timeslot] = classname;
-    var count = Students.find(query).fetch().length;
-    if(count!=null) {
-        return count;
-    } else {
-        return 0;
-    }
-}
 
 if (Meteor.isClient) {
+    
+    function liveCount(_id, timeslot) {
+        var classname = Classes.findOne({_id: _id}).classname;
+        var query = {};
+        query['classnames.'+timeslot] = classname;
+        var count = Students.find(query).fetch().length;
+        if(count!=null) {
+            return count;
+        } else {
+            return 0;
+        }
+    }
+
+    Students = new Meteor.Collection("students");
+    Classes = new Meteor.Collection("classes");
+    Schools = new Meteor.Collection("schools");
+    Clusters = new Meteor.Collection("clusters");
+    Timeslots = new Meteor.Collection("timeslots");
+    General = new Meteor.Collection("general");
+    Codes = new Meteor.Collection("codes");
 
     Meteor.startup(function(){
         registrationControlMsgUpdate();
@@ -467,7 +467,7 @@ if (Meteor.isClient) {
                 return $(this).val();
             }));
 
-            Students.update({_id: this._id},{fname: fname, lname: lname, schoolname: schoolname, classnames: classnames, time: time});
+            Students.update({_id: this._id},{$set: {fname: fname, lname: lname, schoolname: schoolname, classnames: classnames, time: time}});
             
             Session.set('selectedEntries', _.without(Session.get('selectedEntries'), this._id));
         },
@@ -518,7 +518,7 @@ if (Meteor.isClient) {
             var classsizelimit = $('.classsizelimitentry').val();
             var classrequired = $('.classrequiredentry').val();
 
-            Classes.update({_id: this._id},{classname: classname, classroom: classroom, classtimeslot: classtimeslot, classgroup: classgroup, classdescription: classdescription, classsizelimit: classsizelimit, classrequired: classrequired});
+            Classes.update({_id: this._id},{$set: {classname: classname, classroom: classroom, classtimeslot: classtimeslot, classgroup: classgroup, classdescription: classdescription, classsizelimit: classsizelimit, classrequired: classrequired}});
             
             Session.set('selectedClasses', _.without(Session.get('selectedClasses'), this._id));
         },
@@ -665,7 +665,7 @@ if (Meteor.isClient) {
         'click .savecluster': function(){ 
             var clustername = $('.clusternameentry').val();
 
-            Clusters.update({_id: this._id},{clustername: clustername});
+            Clusters.update({_id: this._id},{$set: {clustername: clustername}});
             
             Session.set('selectedClusters', _.without(Session.get('selectedClusters'), this._id));
         },
@@ -703,7 +703,7 @@ if (Meteor.isClient) {
             var schoolname = $('.schoolnameentry').val();
             var schoolcode = $('.schoolcodeentry').val();
 
-            Schools.update({_id: this._id},{schoolname: schoolname, schoolcode: schoolcode});    
+            Schools.update({_id: this._id},{$set: {schoolname: schoolname, schoolcode: schoolcode}});    
             
             Session.set('selectedSchools', _.without(Session.get('selectedSchools'), this._id));
         },

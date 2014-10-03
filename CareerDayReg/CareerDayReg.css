@@ -1,7 +1,6 @@
-/* CSS declarations go here */
-body {
-    background-color:white;
-	color:black;
+html {
+    color: #545353; 
+    background-color: #B5121B;
 } 
 
 a {
@@ -96,3 +95,4 @@ div {
     width: auto;
     display: inline;
 }
+

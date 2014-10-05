@@ -96,3 +96,40 @@ div {
     display: inline;
 }
 
+.page {
+    width: 8.5in;
+    margin: 1in .25in;
+}
+
+.tag {
+    clear: none;
+
+    font-size: 24px;
+
+    width: 4in;
+    height: 3in;
+
+    float: left;
+
+    vertical-align: middle;
+    text-align: center;
+    overflow: hidden;
+}
+
+.tag-preview {
+
+    font-size: 20px;
+
+    width: 4in;
+    height: 3in;
+
+    vertical-align: middle;
+    text-align: center;
+    overflow: hidden;
+}
+
+.page-break  {
+    clear: left;
+    display:block;
+    page-break-after:always;
+}

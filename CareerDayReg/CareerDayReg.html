@@ -462,16 +462,16 @@
 
 <template name="classentry">
     <div class="panel panel-default container">
-        <table class="table table-condensed table-striped">
+        <table class="table table-condensed table-striped" style="table-layout: fixed; word-wrap: break-word;">
             {{#unless classSelected _id}} 
                 <thead>
                     <tr>
-                        <th class="col-sm-1">
+                        <th class="col-sm-3">
                             <div align="left">
-                                <span><h4>{{classname}}</h4></span>
+                                <h4>{{classname}}</h4>
                             </div>
                         </th>
-                        <th class="col-sm-2">
+                        <th class="col-sm-1">
                             <div align="center">
                                 <div class="btn-group">
                                     <button type="button" name="editclass" class="editclass btn btn-default"><span class="glyphicon glyphicon-pencil"></span></button>
@@ -479,9 +479,9 @@
                                 </div>
                             </div>
                         </th>
-                        <th class="col-sm-2">
+                        <th class="col-sm-1">
                             <div align="center">
-                                <span><h4>{{classroom}}</h4></span>
+                                <h4>{{classroom}}</h4>
                             </div>
                         </th>
                         <th class="col-sm-2">
@@ -501,7 +501,7 @@
                         </th>
                         <th class="col-sm-1">
                             <div align="center">
-                                <span><h4>{{classgroup}}</h4></span>
+                                <h4>{{classgroup}}</h4>
                             </div>
                         </th>
                         <th class="col-sm-1">
@@ -862,26 +862,20 @@
     <div align="center">
         <h3>Template</h3>
     </div>
-    <div class="panel panel-default nametag">
-        <div class="panel-body">
-            <div>
-                Last Name, First Name
-            </div>
-            <div>
-                School
-            </div>
-            <div>
-                Time    Session 1 Room #
-            </div>
-            <div>
-                Time    Session 2 Room #
-            </div>
-            <div>
-                Time    Session 3 Room #
-            </div>
-            <div>
-                Time    Session 4 Room #
-            </div>
+    <div align="center">
+        <div class="tag-preview">
+            Last Name, First Name
+            <br>
+            School
+            <br>
+            <br>
+            Time, Session 1, Room #
+            <br>
+            Time, Session 2, Room #
+            <br>
+            Time, Session 3, Room #
+            <br>
+            Time, Session 4, Room #
         </div>
     </div>
     {{#if printing}}
@@ -893,28 +887,28 @@
 </template>
 
 <template name="nametags">
-    {{#each nametagstudents}}
-        <div class="panel panel-default nametag">
-            <div class="panel-body">
-                <div>
-                    {{lname}}, {{fname}}
-                </div>
-                <div>
-                    {{schoolname}}
-                </div>
-                {{#each indexArray classnames}}
-                    <div>
-                        {{queryget 'Timeslots' 'slot' index 'time' true}} {{value}} {{queryget 'Classes' 'classname' value 'classroom' true}}
-                    </div>
+    {{#each nametagspage}}
+        <div class="page">
+        {{#each indexArray .}}
+            <div class="tag">
+                {{value.lname}}, {{value.fname}}
+                <br>
+                {{value.schoolname}}
+                <br>
+                {{#each indexArray value.classnames}}
+                    <br>
+                    {{queryget 'Timeslots' 'slot' index 'time' true}}, {{value}}, {{queryget 'Classes' 'classname' value 'classroom' true}}
                 {{/each}}
             </div>
+            {{#if value.isFinal}}
+                <script>
+                    window.print();
+                    parent.postMessage("printed", "*");
+                </script>
+            {{/if}}
+        {{/each}}
         </div>
-        {{#if isFinal}}
-            <script>
-                window.print();
-                parent.postMessage("printed", "*");
-            </script>
-        {{/if}}
+        <div class="page-break"></div>
     {{/each}}
 </template>
 
@@ -929,7 +923,7 @@
             <h4>{{classname}}</h4>
         </div>
         <div class="panel-body">
-            {{classdescription}}
+            {{{classdescription}}}
         </div>
     </li>
 </template>

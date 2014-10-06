@@ -455,12 +455,13 @@ if (Meteor.isClient) {
             }
         },
 
-        'click .saveentry': function(){ 
-            var fname = $('.fnameentry').val();
-      		var lname = $('.lnameentry').val();
-            var schoolname = $('.schoolnameentry').val();
-            var time = $('.timeentry').val();
-            var classnames = $.makeArray($('.classnameentry').map(function(){
+        'click .saveentry': function(evt){
+            var superparent = $(evt.currentTarget).parent().parent().parent();
+            var fname = superparent.find('.fnameentry').val();
+      		var lname = superparent.find('.lnameentry').val();
+            var schoolname = superparent.find('.schoolnameentry').val();
+            var time = superparent.find('.timeentry').val();
+            var classnames = $.makeArray(superparent.find('.classnameentry').map(function(){
                 return $(this).val();
             }));
 
@@ -469,11 +470,12 @@ if (Meteor.isClient) {
             Session.set('selectedEntries', _.without(Session.get('selectedEntries'), this._id));
         },
 
-        'click .savenewentry': function(){
-            var fname = $('.fnameentry').val();
-      		var lname = $('.lnameentry').val();
-            var schoolname = $('.schoolnameentry').val();
-            var time = $('.timeentry').val();
+        'click .savenewentry': function(evt){
+            var superparent = $(evt.currentTarget).parent().parent().parent();
+            var fname = superparent.find('.fnameentry').val();
+      		var lname = superparent.find('.lnameentry').val();
+            var schoolname = superparent.find('.schoolnameentry').val();
+            var time = superparent.find('.timeentry').val();
             var classnames = $.makeArray($('.classnameentry').map(function(){
                 return $(this).val();
             }));
@@ -504,32 +506,34 @@ if (Meteor.isClient) {
             }
         },
 
-        'click .saveclass': function(error, template){ 
-            var classname = $('.classnameentry').val();
-            var classroom = $('.classroomentry').val();
-      		var classtimeslot = _.map(template.findAll(".classtimeslotbox[type=checkbox]:checked"), function(item) {
+        'click .saveclass': function(evt, template){ 
+            var superparent = $(evt.currentTarget).parent().parent().parent().parent().parent().parent().parent();
+            var classname = superparent.find('.classnameentry').val();
+            var classroom = superparent.find('.classroomentry').val();
+      		var classtimeslot = _.map(superparent.find(".classtimeslotbox[type=checkbox]:checked"), function(item) {
                 return Number(item.value);
             });
-            var classgroup = $('.classgroupentry').val();
-            var classdescription = $('.classdescriptionentry').val();
-            var classsizelimit = $('.classsizelimitentry').val();
-            var classrequired = $('.classrequiredentry').val();
+            var classgroup = superparent.find('.classgroupentry').val();
+            var classdescription = superparent.find('.classdescriptionentry').val();
+            var classsizelimit = superparent.find('.classsizelimitentry').val();
+            var classrequired = superparent.find('.classrequiredentry').val();
 
             Classes.update({_id: this._id},{$set: {classname: classname, classroom: classroom, classtimeslot: classtimeslot, classgroup: classgroup, classdescription: classdescription, classsizelimit: classsizelimit, classrequired: classrequired}});
             
             Session.set('selectedClasses', _.without(Session.get('selectedClasses'), this._id));
         },
 
-        'click .savenewclass': function(error, template){
-            var classname = $('.classnameentry').val();
-      		var classroom = $('.classroomentry').val();
-            var classtimeslot = _.map(template.findAll(".classtimeslotbox[type=checkbox]:checked"), function(item) {
+        'click .savenewclass': function(evt, template){
+            var superparent = $(evt.currentTarget).parent().parent().parent().parent().parent().parent().parent();
+            var classname = superparent.find('.classnameentry').val();
+      		var classroom = superparent.find('.classroomentry').val();
+            var classtimeslot = _.map(superparent.find(".classtimeslotbox[type=checkbox]:checked"), function(item) {
                 return Number(item.value);
             });
-            var classgroup = $('.classgroupentry').val();
-            var classdescription = $('.classdescriptionentry').val();
-            var classsizelimit = $('.classsizelimitentry').val();
-            var classrequired = $('.classrequiredentry').val();
+            var classgroup = superparent.find('.classgroupentry').val();
+            var classdescription = superparent.find('.classdescriptionentry').val();
+            var classsizelimit = superparent.find('.classsizelimitentry').val();
+            var classrequired = superparent.find('.classrequiredentry').val();
 
             Classes.insert({classname: classname, classroom: classroom, classtimeslot: classtimeslot, classgroup: classgroup, classdescription: classdescription, classsizelimit: classsizelimit, classrequired: classrequired});
             
@@ -659,16 +663,18 @@ if (Meteor.isClient) {
             }
         },
 
-        'click .savecluster': function(){ 
-            var clustername = $('.clusternameentry').val();
+        'click .savecluster': function(evt){ 
+            var superparent = $(evt.currentTarget).parent().parent().parent();
+            var clustername = superparent.find('.clusternameentry').val();
 
             Clusters.update({_id: this._id},{$set: {clustername: clustername}});
             
             Session.set('selectedClusters', _.without(Session.get('selectedClusters'), this._id));
         },
 
-        'click .savenewcluster': function(){
-            var clustername = $('.clusternameentry').val();
+        'click .savenewcluster': function(evt){
+            var superparent = $(evt.currentTarget).parent().parent().parent();
+            var clustername = superparent.find('.clusternameentry').val();
 
             Clusters.insert({clustername: clustername});
              
@@ -696,18 +702,20 @@ if (Meteor.isClient) {
             }
         },
 
-        'click .saveschool': function(){ 
-            var schoolname = $('.schoolnameentry').val();
-            var schoolcode = $('.schoolcodeentry').val();
+        'click .saveschool': function(evt){
+            var superparent = $(evt.currentTarget).parent().parent().parent();
+            var schoolname = superparent.find('.schoolnameentry').val();
+            var schoolcode = superparent.find('.schoolcodeentry').val();
 
             Schools.update({_id: this._id},{$set: {schoolname: schoolname, schoolcode: schoolcode}});    
             
             Session.set('selectedSchools', _.without(Session.get('selectedSchools'), this._id));
         },
 
-        'click .savenewschool': function(){
-            var schoolname = $('.schoolnameentry').val();
-            var schoolcode = $('.schoolcodeentry').val();
+        'click .savenewschool': function(evt){
+            var superparent = $(evt.currentTarget).parent().parent().parent();
+            var schoolname = superparent.find('.schoolnameentry').val();
+            var schoolcode = superparent.find('.schoolcodeentry').val();
 
             Schools.insert({schoolname: schoolname, schoolcode: schoolcode});
 

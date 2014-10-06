@@ -532,7 +532,7 @@
             {{else}}
                 <thead>
                     <tr>
-                        <th>
+                        <th class="col-sm-3">
                             <div align="left">
                                 <span>
                                     Class Name:
@@ -869,13 +869,15 @@
             School
             <br>
             <br>
-            Time, Session 1, Room #
-            <br>
-            Time, Session 2, Room #
-            <br>
-            Time, Session 3, Room #
-            <br>
-            Time, Session 4, Room #
+            <div class="classes-tag">
+                Time, Session 1, Room #
+                <br>
+                Time, Session 2, Room #
+                <br>
+                Time, Session 3, Room #
+                <br>
+                Time, Session 4, Room #
+            </div>
         </div>
     </div>
     {{#if printing}}
@@ -895,10 +897,12 @@
                 <br>
                 {{value.schoolname}}
                 <br>
-                {{#each indexArray value.classnames}}
-                    <br>
-                    {{queryget 'Timeslots' 'slot' index 'time' true}}, {{value}}, {{queryget 'Classes' 'classname' value 'classroom' true}}
-                {{/each}}
+                <div class="classes-tag">
+                    {{#each indexArray value.classnames}}
+                        <br>
+                        {{queryget 'Timeslots' 'slot' index 'time' true}}, {{value}}, {{queryget 'Classes' 'classname' value 'classroom' true}}
+                    {{/each}}
+                </div>
             </div>
             {{#if value.isFinal}}
                 <script>

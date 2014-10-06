@@ -104,10 +104,12 @@ div {
 .tag {
     clear: none;
 
-    font-size: 24px;
+    font-size: 18px;
 
-    width: 4in;
-    height: 3in;
+    width: 3.75in;
+    height: 2.75in;
+
+    padding: .125in;
 
     float: left;
 
@@ -116,12 +118,21 @@ div {
     overflow: hidden;
 }
 
+.classes-tag {
+    font-size: 12px;
+    clear: inherit;
+    vertical-align: inherit;
+    text-align: inherit;
+}
+
 .tag-preview {
 
-    font-size: 20px;
+    font-size: 18px;
 
-    width: 4in;
-    height: 3in;
+    width: 3.75in;
+    height: 2.75in;
+
+    padding: .125in;
 
     vertical-align: middle;
     text-align: center;

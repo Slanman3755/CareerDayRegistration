@@ -184,7 +184,7 @@ if (Meteor.isClient) {
     }
 
     Handlebars.registerHelper('nametagspage', function(index) {
-        var students = Students.find({}, {sort: {lname: 1}}).fetch();
+        var students = Students.find({}, {sort: {schoolname: 1}}).fetch();
         if(students.length>0) {
             students[students.length-1].isFinal = true;
             var pages = [];

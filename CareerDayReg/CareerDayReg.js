@@ -42,6 +42,7 @@ if (Meteor.isClient) {
         Session.set('editingNumClasses', false);
         Session.set('selectedListClass', []);
         Session.set('editingMainDescription', false);
+        Session.set('editingInstructions', false);
     });
 
     Router.onRun(function(){
@@ -65,6 +66,7 @@ if (Meteor.isClient) {
         Session.set('editingNumClasses', false);
         Session.set('selectedListClass', []);
         Session.set('editingMainDescription', false);
+        Session.set('editingInstructions', false);
     });
     
     Template.roster.students = function(){
@@ -153,6 +155,14 @@ if (Meteor.isClient) {
 
     Template.home.maindescription = function(){
         return General.findOne().maindescription;
+    }
+
+    Template.general.instructions = function() {
+        return General.findOne().instructions;
+    }
+
+    Template.form.instructions = function() {
+        return General.findOne().instructions;
     }
 
     Template.classentry.clusters = function(){
@@ -301,6 +311,10 @@ if (Meteor.isClient) {
 
     Handlebars.registerHelper('editingMainDescription', function() {
         return Session.get('editingMainDescription');
+    });
+
+    Handlebars.registerHelper('editingInstructions', function() {
+        return Session.get('editingInstructions');
     });
 
     Handlebars.registerHelper('editingNumClasses', function(){
@@ -742,12 +756,24 @@ if (Meteor.isClient) {
             Session.set('editingMainDescription', false);
         },
 
-        'click .savemaindesciption': function() {
+        'click .savemaindescription': function() {
             var main = $('.maindescriptionentry').val();
-            Meteor.call('clearGeneral', function(error) {
-                General.insert({maindescription: main});    
-            });
+            General.update({_id: General.findOne()._id}, {$set: {maindescription: main}});
             Session.set('editingMainDescription', false);
+        },
+
+        'click .editinstructions': function() {
+            Session.set('editingInstructions', true);
+        },
+
+        'click .cancelinstructions': function() {
+            Session.set('editingInstructions', false);
+        },
+
+        'click .saveinstructions': function() {
+            var instructions = $('.instructionsentry').val();
+            General.update({_id: General.findOne()._id}, {$set: {instructions: instructions}});
+            Session.set('editingInstructions', false);
         },
 
         'click .deletecodes': function() {

@@ -882,37 +882,42 @@
 </template>
 
 <template name="print">
-    <div align="center"><h3>Files</h3></div>
-    <div align="center">
-        <button type="button" name="getcsv" class="offset btn btn-default getcsv">Get Roster CSV File</button>
-        <button type="button" name="getcodes" class="offset btn btn-default getcodes">Get Codes CSV File</button>
-    </div>
-    <div align="center">
-        <h3>Template</h3>
-    </div>
-    <div align="center">
-        <div class="tag-preview">
-            Last Name, First Name
-            <br>
-            School
-            <br>
-            <br>
-            <div class="classes-tag">
-                Time, Session 1, Room #
-                <br>
-                Time, Session 2, Room #
-                <br>
-                Time, Session 3, Room #
-                <br>
-                Time, Session 4, Room #
-            </div>
+    <div class="panel panel-default">
+        <div class="panel-heading" align="center"><h3>Files</h3></div>
+        <div class="panel-body" align="center">
+            <button type="button" name="getcsv" class="offset btn btn-default getcsv">Get Roster CSV File</button>
+            <button type="button" name="getcodes" class="offset btn btn-default getcodes">Get Codes CSV File</button>
         </div>
     </div>
-    {{#if printing}}
-        <iframe src="{{pathFor 'nametags'}}" hidden></iframe>
-    {{/if}}
-    <div align="center">
-        <button type="button" name="printnametags" class="offset btn btn-default printnametags"><span class="glyphicon glyphicon-print"></span></button>
+    <div class="panel panel-default">
+        <div class="panel-heading" align="center">
+        <h3>Nametags Template</h3>
+        </div>
+        <div class="panel-body" align="center">
+            <div class="tag-preview">
+                Last Name, First Name
+                <br>
+                School
+                <br>
+                <br>
+                <div class="classes-tag">
+                    Time, Session 1, Room #
+                    <br>
+                    Time, Session 2, Room #
+                    <br>
+                    Time, Session 3, Room #
+                    <br>
+                    Time, Session 4, Room #
+                </div>
+            </div>
+        </div>
+        {{#if printingNametags}}
+            <iframe src="{{pathFor 'nametags'}}" hidden></iframe>
+        {{/if}}
+        <div align="center">
+            <button type="button" name="printnametags" class="btn btn-default printnametags"><span class="glyphicon glyphicon-print"></span></button>
+        </div>
+        <br>
     </div>
 </template>
 
@@ -935,7 +940,7 @@
             {{#if value.isFinal}}
                 <script>
                     document.execCommand('print', false, null);
-                    parent.postMessage("printed", "*");
+                    parent.postMessage("printedNametags", "*");
                 </script>
             {{/if}}
         {{/each}}

@@ -213,12 +213,12 @@ if (Meteor.isServer) {
 
         register: function(fname, lname, schoolcode, studentcode, selectedClasses){
             if(registrationEnabled) {
-                var school = Schools.findOne({schoolcode: schoolcode});
+                var school = Schools.findOne({schoolcode: schoolcode.toLowerCase()});
                 
                 if(fname!="" && lname!="") {
                     if(school!=null) {
 
-                        if(Codes.find({code: studentcode, available: 'Yes'}).count() <= 0) return "Please input a valid unclaimed student code";
+                        if(Codes.find({code: studentcode.toLowerCase(), available: 'Yes'}).count() <= 0) return "Please input a valid unclaimed student code";
 
                         if(selectedClasses.length == numClasses) {
                             var requiredClasses = Classes.find({classrequired:'Yes'}).fetch();

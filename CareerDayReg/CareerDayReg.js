@@ -38,7 +38,7 @@ if (Meteor.isClient) {
         Session.set('addnewentry', false);
         Session.set('addnewcluster', false);
         Session.set('addnewschool', false);
-        Session.set('printing', false);
+        Session.set('printingNametags', false);
         Session.set('editingNumClasses', false);
         Session.set('selectedListClass', []);
         Session.set('editingMainDescription', false);
@@ -62,7 +62,7 @@ if (Meteor.isClient) {
         Session.set('addnewentry', false);
         Session.set('addnewcluster', false);
         Session.set('addnewschool', false);
-        Session.set('printing', false);
+        Session.set('printingNametags', false);
         Session.set('editingNumClasses', false);
         Session.set('selectedListClass', []);
         Session.set('editingMainDescription', false);
@@ -205,7 +205,6 @@ if (Meteor.isClient) {
         }
     });
 
-
     Handlebars.registerHelper('queryget', function(collection, data, val, returnData, doParent){
         var query = {};
         query[data] = val;
@@ -231,7 +230,7 @@ if (Meteor.isClient) {
     });
 
     window.addEventListener('message', function(e){
-        if(e.data=='printed') Session.set('printing', false);
+        if(e.data=='printedNametags') Session.set('printingNametags', false);
     }, false);
 
     Handlebars.registerHelper('equals', function(param1, param2){
@@ -341,8 +340,8 @@ if (Meteor.isClient) {
         return Session.get('addnewschool');
     });
 
-    Handlebars.registerHelper('printing', function(){
-        return Session.get('printing');
+    Handlebars.registerHelper('printingNametags', function(){
+        return Session.get('printingNametags');
     });
 
     Handlebars.registerHelper('classesheader', function(){
@@ -719,7 +718,7 @@ if (Meteor.isClient) {
         'click .saveschool': function(evt){
             var superparent = $(evt.currentTarget).parent().parent().parent();
             var schoolname = superparent.find('.schoolnameentry').val();
-            var schoolcode = superparent.find('.schoolcodeentry').val();
+            var schoolcode = superparent.find('.schoolcodeentry').val().toLowerCase();
 
             Schools.update({_id: this._id},{$set: {schoolname: schoolname, schoolcode: schoolcode}});    
             
@@ -729,7 +728,7 @@ if (Meteor.isClient) {
         'click .savenewschool': function(evt){
             var superparent = $(evt.currentTarget).parent().parent().parent();
             var schoolname = superparent.find('.schoolnameentry').val();
-            var schoolcode = superparent.find('.schoolcodeentry').val();
+            var schoolcode = superparent.find('.schoolcodeentry').val().toLowerCase();
 
             Schools.insert({schoolname: schoolname, schoolcode: schoolcode});
 
@@ -745,7 +744,7 @@ if (Meteor.isClient) {
         },
 
         'click .printnametags': function(){
-            Session.set('printing', true);
+            Session.set('printingNametags', true);
         },
 
         'click .editmaindescription': function() {

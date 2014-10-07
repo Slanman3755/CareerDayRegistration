@@ -12,4 +12,5 @@ Router.map(function() {
     this.route('codes', {path: '/admin/controlpanel/codes/', layoutTemplate: 'admin'});
 
     this.route('nametags', {path:'/admin/controlpanel/print/nametags', layoutTemplate: 'main'});
+    this.route('info', {path:'/admin/controlpanel/print/info', layoutTemplate: 'main'}); 
 });

@@ -148,8 +148,8 @@ if (Meteor.isServer) {
             if(Meteor.user()) Timeslots.remove({});
         },
 
-        clearGeneral: function() {
-            if(Meteor.user()) General.remove({});
+        clearStudents: function() {
+            if(Meteor.user()) Students.remove({});
         },
 
         deleteCodes: function() {

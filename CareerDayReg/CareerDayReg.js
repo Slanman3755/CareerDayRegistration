@@ -781,6 +781,10 @@ if (Meteor.isClient) {
 
         'click .generatecodes': function() {
             Meteor.call('generateCodes', $('.codequantity').val());
+        },
+
+        'click .deleteroster': function() {
+            if(confirm("Are you sure you want to DELETE the ENTIRE ROSTER?")) Meteor.call('clearStudents');
         }
     });
     

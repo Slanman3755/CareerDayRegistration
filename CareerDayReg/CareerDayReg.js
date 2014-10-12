@@ -12,6 +12,17 @@ if (Meteor.isClient) {
             return 0;
         }
     }
+    
+    function liveCount(classname, timeslot) {
+        var query = {};
+        query['classnames.'+timeslot] = classname;
+        var count = Students.find(query).fetch().length;
+        if(count!=null) {
+            return count;
+        } else {
+            return 0;
+        }
+    }
 
     Students = new Meteor.Collection("students");
     Classes = new Meteor.Collection("classes");
@@ -378,7 +389,14 @@ if (Meteor.isClient) {
     });
 
     Handlebars.registerHelper('classesAtTime', function(timeslot){
-        return Classes.find({classtimeslot: timeslot});
+        return _.map(Classes.find({classtimeslot: timeslot}, {sort: {classname: 1}}).fetch(), function(iterator) {
+            iterator['full'] = liveCount(iterator.classname, timeslot) >= iterator.classsizelimit;
+            return iterator;
+        });
+    });
+
+    Handlebars.registerHelper('classSelector', function(group, timeslot){
+        return Classes.find({classgroup: group, classtimeslot: timeslot}, {sort: {classname: 1}});
     });
 
     Handlebars.registerHelper('indexArray', function(array){
@@ -394,11 +412,7 @@ if (Meteor.isClient) {
             return query;
         });
     });
-
-    Handlebars.registerHelper('classFull', function(_id, timeslot) {
-        return liveCount(_id, timeslot) >= Classes.findOne({_id: _id}).classsizelimit;
-    });
-    
+     
     function registrationControlMsgUpdate() {
         Meteor.call('isRegistrationEnabled', function(error,enabled){
             if(enabled) {

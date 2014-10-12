@@ -135,10 +135,10 @@
             <select class="form-control classselect" name="classselect">
                 <option selected hidden disabled value=""></option>
                     {{#each classesAtTime .}}
-                        {{#unless classFull _id timeslot}}
+                        {{#unless full}}
                             <option data-meteor-id="{{_id}}" value="{{classname}}">{{classname}}</option>
                         {{else}}
-                            <option data-meteor-id="{{_id}}" value="{{classname}}" disabled>{{classname}} (Full)</option>
+                            <option data-meteor-id="{{_id}}" value="{{classname}}" disabled>{{classname}} (Full for this time)</option>
                         {{/unless}}
                     {{/each}}
             </select>

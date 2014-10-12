@@ -240,13 +240,13 @@ if (Meteor.isServer) {
                             var ids = [];
                             var classnames = [];
                             var i = 0;
-                            var overflowed = false;
+                            var overflowed;
                             _.each(selectedClasses, function(id, i){
                                 var selectedClass = Classes.findOne({_id: id}); 
                                 if(liveCount(selectedClass._id, i)<selectedClass.classsizelimit) {
                                     ids.push(id);
                                 } else {
-                                    overflowed = true;
+                                    overflowed = selectedClass.classname;
                                     return false;
                                 }
                                 i++;
@@ -264,7 +264,7 @@ if (Meteor.isServer) {
 
                                 return "";
                             } else {
-                               return "One or more of your requested classes is already full"; 
+                               return overflowed + " is already full"; 
                             }
                         } else {
                             return "Please select exactly "+numClasses+" classes";

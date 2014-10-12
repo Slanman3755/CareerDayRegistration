@@ -377,9 +377,8 @@ if (Meteor.isClient) {
         return param1+param2;
     });
 
-    Handlebars.registerHelper('classSelector', function(clustername, timeslot){
-        var classes = Classes.find({classgroup: clustername, classtimeslot: timeslot});
-        return classes;
+    Handlebars.registerHelper('classesAtTime', function(timeslot){
+        return Classes.find({classtimeslot: timeslot});
     });
 
     Handlebars.registerHelper('indexArray', function(array){
@@ -394,6 +393,10 @@ if (Meteor.isClient) {
             var query = {index: key, value: value};
             return query;
         });
+    });
+
+    Handlebars.registerHelper('classFull', function(_id, timeslot) {
+        return liveCount(_id, timeslot) >= Classes.findOne({_id: _id}).classsizelimit;
     });
     
     function registrationControlMsgUpdate() {

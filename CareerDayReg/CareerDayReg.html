@@ -134,11 +134,13 @@
             <span class="input-group-addon">Time Slot {{timeslot .}}</span>
             <select class="form-control classselect" name="classselect">
                 <option selected hidden disabled value=""></option>
-                {{#each clusters}}
-                    {{#each classSelector clustername ..}}
-                        <option data-meteor-id="{{_id}}" value="{{classname}}">{{classname}}</option>
+                    {{#each classesAtTime .}}
+                        {{#unless classFull _id timeslot}}
+                            <option data-meteor-id="{{_id}}" value="{{classname}}">{{classname}}</option>
+                        {{else}}
+                            <option data-meteor-id="{{_id}}" value="{{classname}}" disabled>{{classname}} (Full)</option>
+                        {{/unless}}
                     {{/each}}
-                {{/each}}
             </select>
         </div>
     </li>

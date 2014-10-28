@@ -119,7 +119,7 @@
             <li class="list-group-item container">
                 <h1>{{clustername}}</h1>
                 <ul class="list-group">
-                    {{#each query 'Classes' 'classgroup' clustername false}}
+                    {{#each getclassesbygroup clustername}}
                         {{> classlist}}
                     {{/each}}
                 </ul>

@@ -230,6 +230,10 @@ if (Meteor.isClient) {
         else return window[collection].find(query);
     });
 
+    Handlebars.registerHelper('getclassesbygroup', function(clustername) {
+        return Classes.find({classgroup: clustername}, {sort: {llassname: 1}});
+    });
+
     Handlebars.registerHelper('editabletimeslots', function(){
         var inputs = [];
         var timeslots = Timeslots.find().fetch();

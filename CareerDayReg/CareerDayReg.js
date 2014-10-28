@@ -231,7 +231,7 @@ if (Meteor.isClient) {
     });
 
     Handlebars.registerHelper('getclassesbygroup', function(clustername) {
-        return Classes.find({classgroup: clustername}, {sort: {llassname: 1}});
+        return Classes.find({classgroup: clustername}, {sort: {classname: 1}});
     });
 
     Handlebars.registerHelper('editabletimeslots', function(){

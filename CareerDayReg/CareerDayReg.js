@@ -1,7 +1,7 @@
 
 if (Meteor.isClient) {
     
-    function liveCount(_id, timeslot) {
+    function liveCountId(_id, timeslot) {
         var classname = Classes.findOne({_id: _id}).classname;
         var query = {};
         query['classnames.'+timeslot] = classname;
@@ -435,7 +435,7 @@ if (Meteor.isClient) {
         });
     }
 
-    Handlebars.registerHelper('livecount', liveCount);
+    Handlebars.registerHelper('livecount', liveCountId);
     
     Template.admin.events({
         'click .signout': function(){ 

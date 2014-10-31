@@ -31,6 +31,7 @@ if (Meteor.isClient) {
     Timeslots = new Meteor.Collection("timeslots");
     General = new Meteor.Collection("general");
     Codes = new Meteor.Collection("codes");
+    Registration = new Meteor.Collection("registration");
 
     Meteor.startup(function(){
         registrationControlMsgUpdate();

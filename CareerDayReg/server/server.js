@@ -9,6 +9,7 @@ if (Meteor.isServer) {
     Timeslots = new Meteor.Collection("timeslots");
     General = new Meteor.Collection("general");
     Codes = new Meteor.Collection("codes");
+    Registration = new Meteor.Collection("registration");
 
     Students.allow({
         insert: function(userId) {
@@ -113,20 +114,36 @@ if (Meteor.isServer) {
         }
     });
 
+    Registration.allow({
+        insert: function(userId) {
+            return userId;
+        },
+
+        update: function(userId) {
+            return userId;
+        },
+
+        remove: function(userId) {
+            return userId;
+        }
+    });
 
     function liveCount(_id, timeslot) {
         var classname = Classes.findOne({_id: _id}).classname;
         var query = {};
         query['classnames.'+timeslot] = classname;
         var count = Students.find(query).fetch().length;
-        if(count!=null) {
+        if(count != null) {
             return count;
         } else {
             return 0;
         }
     }
 
-    registrationEnabled = false;
+    var registration = Registration.findOne();
+    registrationEnabled = registration ? registration.enabled : false;
+    Registration.remove();
+    Registration.insert({enabled: registrationEnabled});
     numClasses = 4;
 
     csv = Meteor.require('fast-csv');
@@ -212,7 +229,7 @@ if (Meteor.isServer) {
         },
 
         register: function(fname, lname, schoolcode, studentcode, selectedClasses){
-            if(registrationEnabled) {
+            if(Registration.findOne().enabled) {
                 var school = Schools.findOne({schoolcode: schoolcode.toLowerCase()});
                 
                 if(fname!="" && lname!="") {
@@ -281,11 +298,15 @@ if (Meteor.isServer) {
         },
 
         isRegistrationEnabled: function(){
-            return registrationEnabled;
+            return Registration.findOne().enabled;
         },
 
         toggleRegistrationEnabled: function(){
-            if(Meteor.user()) registrationEnabled = !registrationEnabled;
+            if(Meteor.user()) {
+                registrationEnabled = !Registration.findOne().enabled;
+                Registration.remove({});
+                Registration.insert({enabled: registrationEnabled});
+            }
         },
 
         getNumClasses: function(){

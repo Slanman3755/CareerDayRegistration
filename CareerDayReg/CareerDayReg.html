@@ -602,8 +602,13 @@
                                 <span>
                                     Required:
                                     <select name="classrequiredentry" class="form-control classrequiredentry">
-                                        <option value="No">No</option>
-                                        <option value="Yes">Yes</option>
+                                        {{#unless equals classrequired 'Yes'}}
+                                            <option value="No" selected>No</option>
+                                            <option value="Yes">Yes</option>
+                                        {{else}}
+                                            <option value="No">No</option>
+                                            <option value="Yes" selected>Yes</option>
+                                        {{/unless}}
                                     </select>
                                 </span>
                             </div>

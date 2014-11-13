@@ -213,6 +213,7 @@ if (Meteor.isClient) {
             for(var i = 0; i < students.length / 6 + 1; i++) {
                 pages.push(students.slice(i * 6, i * 6 + 6));
             }
+            pages[pages.length-1].isFinal = true;
             return pages;
         }
     });

@@ -947,15 +947,15 @@
                     {{/each}}
                 </div>
             </div>
-            {{#if value.isFinal}}
-                <script>
-                    document.execCommand('print', false, null);
-                    parent.postMessage("printedNametags", "*");
-                </script>
-            {{/if}}
         {{/each}}
         </div>
         <div class="page-break"></div>
+        {{#if isFinal}}
+            <script>
+                document.execCommand('print', false, null);
+                parent.postMessage("printedNametags", "*");
+            </script>
+        {{/if}}
     {{/each}}
 </template>
 
